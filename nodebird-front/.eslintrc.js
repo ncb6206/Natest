@@ -4,7 +4,12 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: ["eslint:recommended", "plugin:react/recommended", "standard-with-typescript"],
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "standard-with-typescript",
+    "prettier",
+  ],
   overrides: [],
   parserOptions: {
     ecmaVersion: 2020,
