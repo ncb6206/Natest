@@ -16,7 +16,7 @@ export default function Signup() {
   const [id, onChangeId] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const [passwordCheck, setPasswordCheck] = useInput("");
+  const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
 
   const onChangePasswordCheck = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +27,7 @@ export default function Signup() {
   const [term, setTerm] = useState(false);
   const [termError, setTermError] = useState(false);
 
-  const onChangeTerm = useCallback((e) => {
+  const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setTerm(e.target.checked);
     setTermError(false);
   }, []);

@@ -4,24 +4,30 @@ import { LayoutHeader } from "./header/LayoutHeader";
 import { useState } from "react";
 import UserProfile from "../units/userProfile/UserProfile";
 import LoginForm from "../units/form/LoginForm";
+import { useSelector } from "react-redux";
 
 interface ILayoutProps {
   children: JSX.Element;
 }
 
+interface IUserState {
+  user: {
+    isLoggedIn: boolean;
+    user: {};
+    signUpData: {};
+    loginData: {};
+  };
+}
+
 export function Layout(props: ILayoutProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn } = useSelector((state: IUserState) => state?.user);
 
   return (
     <>
       <LayoutHeader />
       <Row>
         <Col xs={24} md={6}>
-          {isLoggedIn ? (
-            <UserProfile setIsLoggedIn={setIsLoggedIn} />
-          ) : (
-            <LoginForm setIsLoggedIn={setIsLoggedIn} />
-          )}
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {props.children}

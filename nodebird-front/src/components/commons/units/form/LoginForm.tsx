@@ -1,7 +1,9 @@
 import { Form, Input, Button } from "antd";
 import Link from "next/link";
-import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { loginAction } from "../../../../../reducers/user";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -11,11 +13,8 @@ const FormWrapper = styled(Form)`
   padding: 10px;
 `;
 
-interface ILoginForm {
-  setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-}
-
-export default function LoginForm(props: ILoginForm) {
+export default function LoginForm() {
+  const dispatch = useDispatch();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
 
@@ -29,7 +28,7 @@ export default function LoginForm(props: ILoginForm) {
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
-    props.setIsLoggedIn(true);
+    dispatch(loginAction({ id, password }));
   }, [id, password]);
 
   return (

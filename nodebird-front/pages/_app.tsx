@@ -4,7 +4,9 @@ import Head from "next/head";
 import "antd/dist/reset.css";
 import "antd/dist/antd";
 
-export default function App({ Component, pageProps }: AppProps) {
+import wrapper from "../store/configureStore";
+
+function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
@@ -17,3 +19,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+export default wrapper.withRedux(App);
