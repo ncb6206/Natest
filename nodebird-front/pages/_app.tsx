@@ -1,8 +1,7 @@
 import { Layout } from "../src/components/commons/layout";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import "antd/dist/reset.css";
-import "antd/dist/antd";
+import "antd/dist/antd.css";
 
 import wrapper from "../store/configureStore";
 

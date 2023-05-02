@@ -1,9 +1,17 @@
-import Head from "next/head";
+import PostForm from "../src/components/commons/units/form/PostForm";
+import PostCard from "../src/components/commons/units/list/PostCard";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+  const { isLoggedIn } = useSelector((state) => state.user);
+  const { mainPosts } = useSelector((state) => state.post);
+  console.log(isLoggedIn);
   return (
     <>
-      <div>Hello, Next!</div>
+      {isLoggedIn && <PostForm />}
+      {mainPosts.map((post) => {
+        return <PostCard key={post.id} post={post} />;
+      })}
     </>
   );
 }

@@ -10,17 +10,8 @@ interface ILayoutProps {
   children: JSX.Element;
 }
 
-interface IUserState {
-  user: {
-    isLoggedIn: boolean;
-    user: {};
-    signUpData: {};
-    loginData: {};
-  };
-}
-
 export function Layout(props: ILayoutProps) {
-  const { isLoggedIn } = useSelector((state: IUserState) => state?.user);
+  const { isLoggedIn } = useSelector((state) => state?.user);
 
   return (
     <>
