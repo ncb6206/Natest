@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
+import PostCardContent from "../post/PostCardContent";
 
 interface IPostCard {
   post: {
@@ -26,12 +27,15 @@ export default function PostCard({ post }: IPostCard) {
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
+
   const onToggleLike = useCallback(() => {
     setLiked((prev) => !prev);
   }, []);
+
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
+
   return (
     <div>
       <Card
@@ -66,7 +70,7 @@ export default function PostCard({ post }: IPostCard) {
         <Card.Meta
           avatar={<Avatar></Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 export default function Home() {
   const { isLoggedIn } = useSelector((state) => state.user);
   const { mainPosts } = useSelector((state) => state.post);
-  console.log(isLoggedIn);
+
   return (
     <>
       {isLoggedIn && <PostForm />}
