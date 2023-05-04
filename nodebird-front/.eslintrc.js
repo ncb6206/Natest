@@ -9,6 +9,7 @@ module.exports = {
     "plugin:react/recommended",
     "standard-with-typescript",
     "prettier",
+    "airbnb",
   ],
   overrides: [],
   parserOptions: {
@@ -17,6 +18,8 @@ module.exports = {
   },
   plugins: ["import", "react-hooks", "react"],
   rules: {
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/anchor-is-valid": "off",
     "no-console": "off",
     "no-underscore-dangle": "off",
     "react/forbid-prop-types": "off",
@@ -24,5 +27,6 @@ module.exports = {
     "react/jsx-one-expression-per-line": "off",
     "object-curly-newline": "off",
     "linebreak-style": "off",
+    "no-param-reassign": "off",
   },
 };
