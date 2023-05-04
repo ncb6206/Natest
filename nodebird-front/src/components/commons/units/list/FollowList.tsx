@@ -13,20 +13,20 @@ interface IFollowList {
   }[];
 }
 
-export default function FollowList(props: IFollowList) {
+export default function FollowList({ header, data }: IFollowList) {
   return (
     <FollowListWrapper
       grid={{ gutter: 4, xs: 2, md: 3 }}
       size="small"
-      header={<div>{props.header}</div>}
+      header={<div>{header}</div>}
       loadMore={
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <Button>더 보기</Button>
         </div>
       }
       bordered
-      dataSource={props.data}
-      renderItem={(item: any) => (
+      dataSource={data}
+      renderItem={(item) => (
         <List.Item style={{ marginTop: "20px" }}>
           <Card actions={[<StopOutlined key="stop" />]}>
             <Card.Meta description={item.nickname} />

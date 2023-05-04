@@ -10,7 +10,7 @@ export default function ImagesZoom({ images, onClose }) {
       <S.Global />
       <S.Header>
         <h1>상세 이미지</h1>
-        <button onClick={onClose}>X</button>
+        <S.CloseBtn onClick={onClose} />
       </S.Header>
       <S.SlickWrapper>
         <div>

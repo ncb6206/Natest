@@ -27,15 +27,15 @@ const Global = createGlobalStyle`
 `;
 
 export function Layout(props: ILayoutProps) {
-  const { isLoggedIn } = useSelector((state) => state?.user);
+  const { me } = useSelector((state) => state?.user);
 
   return (
     <>
       <Global />
       <LayoutHeader />
-      <Row>
+      <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {props.children}

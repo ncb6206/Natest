@@ -10,13 +10,13 @@ export function LayoutHeader() {
   return (
     <>
       <Menu mode="horizontal">
-        <Menu.Item>
+        <Menu.Item key="home">
           <Link href="/">노드버드</Link>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="profile">
           <Link href="/profile">프로필</Link>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="mail">
           <SearchInput />
         </Menu.Item>
         <Menu.Item>

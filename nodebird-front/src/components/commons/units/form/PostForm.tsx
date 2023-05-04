@@ -1,29 +1,35 @@
-import { addPost } from "../../../../../reducers/post";
+import { ADD_POST_REQUEST, addPost } from "../../../../../reducers/post";
 import { Button, Form, Input } from "antd";
-import { ChangeEvent, useCallback, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function PostForm() {
-  const { imagePaths } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  const imageInput = useRef();
   const [text, setText] = useState("");
+  const { imagePaths, addPostLoading, addPostDone } = useSelector((state) => state.post);
 
-  const onChangeText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-  }, []);
-
-  const onSubmit = useCallback(() => {
-    dispatch(addPost);
-    setText("");
-  }, []);
+  const imageInput = useRef();
 
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
 
+  useEffect(() => {
+    if (addPostDone) {
+      setText("");
+    }
+  }, [addPostDone]);
+
+  const onChangeText = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  }, []);
+
+  const onSubmitForm = useCallback(() => {
+    dispatch({ type: ADD_POST_REQUEST, data: text });
+  }, [text]);
+
   return (
-    <Form style={{ margin: "10px 0 20px" }} encType="multipart/form-data" onFinish={onSubmit}>
+    <Form style={{ margin: "10px 0 20px" }} encType="multipart/form-data" onFinish={onSubmitForm}>
       <Input.TextArea
         value={text}
         onChange={onChangeText}
@@ -33,14 +39,19 @@ export default function PostForm() {
       <div>
         <input type="file" multiple hidden ref={imageInput} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-        <Button type="primary" style={{ float: "right" }} htmlType="submit">
+        <Button
+          type="primary"
+          style={{ float: "right" }}
+          htmlType="submit"
+          loading={addPostLoading}
+        >
           짹짹
         </Button>
       </div>
       <div>
         {imagePaths?.map((v) => (
           <div key={v} style={{ display: "inline-block" }}>
-            <img src={v} style={{ width: "200px" }} alt={v} />
+            <img src={`http://localhost:3065/${v}`} style={{ width: "200px" }} alt={v} />
             <div>
               <Button>제거</Button>
             </div>

@@ -1,9 +1,9 @@
 import { ChangeEvent, useCallback, useState } from "react";
 
 export default function useInput(initialValue: string | null = null) {
-  const [value, setValue] = useState(initialValue);
+  const [value, setter] = useState(initialValue);
   const handler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    setter(e.target.value);
   }, []);
-  return [value, handler];
+  return [value, handler, setter];
 }

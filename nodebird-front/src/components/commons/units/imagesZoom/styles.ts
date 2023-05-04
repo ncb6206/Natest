@@ -1,3 +1,4 @@
+import { CloseOutlined } from "@ant-design/icons";
 import styled, { createGlobalStyle } from "styled-components";
 
 export const Overlay = styled.div`
@@ -72,4 +73,13 @@ export const Global = createGlobalStyle`
   .ant-card-cover {
     transform: none !important;
   }
+`;
+
+export const CloseBtn = styled(CloseOutlined)`
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 15px;
+  line-height: 14px;
+  cursor: pointer;
 `;

@@ -9,7 +9,6 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <meta charSet="utf-8" />
         <title>NodeBird</title>
       </Head>
       <Layout>

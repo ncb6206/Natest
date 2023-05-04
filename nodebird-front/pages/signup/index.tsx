@@ -1,8 +1,11 @@
 import Head from "next/head";
 import { Form, Input, Checkbox, Button } from "antd";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useInput from "../../src/components/hooks/useInput";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { SIGN_UP_REQUEST } from "../../reducers/user";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -13,23 +16,34 @@ const SignupButtonWrapper = styled.div`
 `;
 
 export default function Signup() {
-  const [id, onChangeId] = useInput("");
-  const [nickname, onChangeNickname] = useInput("");
-  const [password, onChangePassword] = useInput("");
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { isSigningUp, me } = useSelector((state) => state.user);
+
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+  const [term, setTerm] = useState(false);
+  const [termError, setTermError] = useState(false);
+
+  const [email, onChangeEmail] = useInput("");
+  const [nickname, onChangeNickname] = useInput("");
+  const [password, onChangePassword] = useInput("");
+
+  useEffect(() => {
+    if (me) {
+      alert("로그인했으니 메인페이지로 이동합니다.");
+      router.push("/");
+    }
+  }, [me && me.id]);
 
   const onChangePasswordCheck = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setPasswordCheck(e.target.value);
     setPasswordError(e.target.value !== password);
   }, []);
 
-  const [term, setTerm] = useState(false);
-  const [termError, setTermError] = useState(false);
-
   const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setTerm(e.target.checked);
     setTermError(false);
+    setTerm(e.target.checked);
   }, []);
 
   const onSubmit = useCallback(() => {
@@ -39,24 +53,31 @@ export default function Signup() {
     if (!term) {
       return setTermError(true);
     }
-    console.log(id, nickname, password);
-  }, [password, passwordCheck, term]);
+    return dispatch({
+      type: SIGN_UP_REQUEST,
+      data: {
+        email,
+        password,
+        nickname,
+      },
+    });
+  }, [email, password, passwordCheck, term]);
 
   return (
     <>
       <Head>
         <title> 회원가입 | NodeBird</title>
       </Head>
-      <Form onFinish={onSubmit}>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
-          <label htmlFor="user-id">아이디</label>
+          <label htmlFor="user-email">아이디</label>
           <br />
-          <Input name="user-id" value={id} onChange={onChangeId} required />
+          <Input name="user-email" value={email} onChange={onChangeEmail} required />
         </div>
         <div>
-          <label htmlFor="user-nick">닉네임</label>
+          <label htmlFor="user-nickname">닉네임</label>
           <br />
-          <Input name="user-nick" value={nickname} onChange={onChangeNickname} required />
+          <Input name="user-nickname" value={nickname} onChange={onChangeNickname} required />
         </div>
         <div>
           <label htmlFor="user-password">비밀번호</label>
@@ -88,7 +109,7 @@ export default function Signup() {
           {termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
         </div>
         <SignupButtonWrapper>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isSigningUp}>
             가입하기
           </Button>
         </SignupButtonWrapper>

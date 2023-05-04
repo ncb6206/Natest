@@ -1,18 +1,24 @@
-import NicknameEditForm from "../../src/components/commons/units/form/NicknameEditForm";
-import FollowList from "../../src/components/commons/units/list/FollowList";
 import Head from "next/head";
 
+import NicknameEditForm from "../../src/components/commons/units/form/NicknameEditForm";
+import FollowList from "../../src/components/commons/units/list/FollowList";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
 export default function Profile() {
-  const followerList = [
-    { nickname: "제로초" },
-    { nickname: "바보" },
-    { nickname: "노드버드오피셜" },
-  ];
-  const followingList = [
-    { nickname: "제로초" },
-    { nickname: "바보" },
-    { nickname: "노드버드오피셜" },
-  ];
+  const router = useRouter();
+  const { me } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!(me && me.id)) {
+      router.push("/");
+    }
+  }, [me && me.id]);
+
+  if (!me) {
+    return null;
+  }
 
   return (
     <>
@@ -20,8 +26,8 @@ export default function Profile() {
         <title> 내 프로필 | NodeBird</title>
       </Head>
       <NicknameEditForm />
-      <FollowList header="팔로잉 목록" data={followingList} />
-      <FollowList header="팔로워 목록" data={followerList} />
+      <FollowList header="팔로잉 목록" data={me.Followings} />
+      <FollowList header="팔로워 목록" data={me.followers} />
     </>
   );
 }
