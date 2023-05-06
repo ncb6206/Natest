@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Form, Input, Checkbox, Button } from "antd";
+import { Form, Input, Checkbox, Button, Modal } from "antd";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useInput from "../../src/components/hooks/useInput";
 import styled from "styled-components";
@@ -18,7 +18,25 @@ const SignupButtonWrapper = styled.div`
 export default function Signup() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isSigningUp, me } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, me, signUpError } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (me && me.id) {
+      router.replace("/");
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      router.push("/");
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      Modal.error({ content: signUpError });
+    }
+  }, [signUpError]);
 
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -36,10 +54,13 @@ export default function Signup() {
     }
   }, [me && me.id]);
 
-  const onChangePasswordCheck = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPasswordCheck(e.target.value);
-    setPasswordError(e.target.value !== password);
-  }, []);
+  const onChangePasswordCheck = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPasswordCheck(e.target.value);
+      setPasswordError(e.target.value !== password);
+    },
+    [password]
+  );
 
   const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setTermError(false);
@@ -109,7 +130,7 @@ export default function Signup() {
           {termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
         </div>
         <SignupButtonWrapper>
-          <Button type="primary" htmlType="submit" loading={isSigningUp}>
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>
             가입하기
           </Button>
         </SignupButtonWrapper>

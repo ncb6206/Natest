@@ -1,6 +1,6 @@
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Modal } from "antd";
 import Link from "next/link";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { LOG_IN_REQUEST } from "../../../../../reducers/user";
@@ -16,9 +16,15 @@ const FormWrapper = styled(Form)`
 
 export default function LoginForm() {
   const dispatch = useDispatch();
-  const { logInLoading } = useSelector((state) => state.user);
+  const { logInLoading, logInError } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
+
+  useEffect(() => {
+    if (logInError) {
+      Modal.error({ content: logInError });
+    }
+  }, [logInError]);
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);

@@ -19,9 +19,6 @@ export function LayoutHeader() {
         <Menu.Item key="mail">
           <SearchInput />
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup">회원가입</Link>
-        </Menu.Item>
       </Menu>
     </>
   );
