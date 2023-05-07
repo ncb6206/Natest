@@ -11,7 +11,11 @@ import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
-import { REMOVE_POST_REQUEST } from "../../../../../reducers/post";
+import {
+  LIKE_POST_REQUEST,
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+} from "../../../../../reducers/post";
 import styled from "styled-components";
 import FollowButton from "../button/FollowButton";
 import Link from "next/link";
@@ -19,11 +23,21 @@ import Link from "next/link";
 interface IPostCard {
   post: {
     id: number;
-    User: object;
+    User: {
+      id: number;
+      email: string;
+      nickname: string;
+    };
     content: string;
     createdAt: object;
-    Comments: Array<object>;
-    Images: Array<object>;
+    Comments: {
+      id: number;
+      content: string;
+    };
+    Images: {
+      id: number;
+      src: string;
+    };
   };
 }
 
@@ -31,16 +45,26 @@ const CardWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
-export default function PostCard({ post }: IPostCard) {
+export default function PostCard({ post }) {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const [liked, setLiked] = useState(false);
   const { me } = useSelector((state) => state.user);
-  const id = me && me.id;
+  const id = useSelector((state) => state.user.me?.id);
+  const liked = post.Likers.find((v) => v.id === id);
 
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+
+  const onUnLike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
 
   const onToggleComment = useCallback(() => {
@@ -61,9 +85,9 @@ export default function PostCard({ post }: IPostCard) {
         actions={[
           <RetweetOutlined key="retweet" />,
           liked ? (
-            <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />
+            <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onUnLike} />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="message" onClick={onToggleComment} />,
           <Popover
@@ -104,16 +128,16 @@ export default function PostCard({ post }: IPostCard) {
             renderItem={(item) => (
               <li>
                 <Comment
-                  author={item.User.nickname}
+                  author={item?.User?.nickname}
                   avatar={
                     <Link
-                      href={{ pathname: "/user", query: { id: item.User.id } }}
-                      as={`/user/${item.User.id}`}
+                      href={{ pathname: "/user", query: { id: item?.User?.id } }}
+                      as={`/user/${item?.User?.id}`}
                     >
-                      <Avatar>{item.User.nickname[0]}</Avatar>
+                      <Avatar>{item?.User?.nickname[0]}</Avatar>
                     </Link>
                   }
-                  content={item.content}
+                  content={item?.content}
                 />
               </li>
             )}

@@ -30,6 +30,7 @@ export default function NicknameEditForm() {
         onChange={onChangeNickname}
         addonBefore="닉네임"
         enterButton="수정"
+        onSearch={onSubmit}
       />
     </EditForm>
   );

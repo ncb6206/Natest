@@ -2,13 +2,24 @@ import Head from "next/head";
 
 import NicknameEditForm from "../../src/components/commons/units/form/NicknameEditForm";
 import FollowList from "../../src/components/commons/units/list/FollowList";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWERS_REQUEST } from "../../reducers/user";
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const router = useRouter();
   const { me } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_FOLLOWERS_REQUEST,
+    });
+    dispatch({
+      type: LOAD_FOLLOWINGS_REQUEST,
+    });
+  });
 
   useEffect(() => {
     if (!(me && me.id)) {

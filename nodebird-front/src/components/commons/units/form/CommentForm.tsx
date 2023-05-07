@@ -25,11 +25,11 @@ export default function CommentForm({ post }) {
 
   return (
     <Form onFinish={onSubmitComment}>
-      <Form.Item style={{ position: "relative", margin: 0 }}>
+      <Form.Item style={{ position: "relative", margin: 0, zIndex: 1 }}>
         <Input.TextArea value={commentText} onChange={onChangeCommentText} rows={4} />
         <Button
-          style={{ position: "absolute", right: 0, bottom: -40 }}
           type="primary"
+          style={{ position: "absolute", right: 0, bottom: -40 }}
           htmlType="submit"
           loading={addCommentLoading}
         >
