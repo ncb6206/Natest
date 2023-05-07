@@ -4,8 +4,9 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
-
+const morgan = require("morgan");
 const postRouter = require("./routes/post");
+const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
 const db = require("./models");
 const passportConfig = require("./passport");
@@ -21,9 +22,11 @@ db.sequelize
 
 passportConfig();
 
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: true,
+    credentials: true, // cookie를 같이 전달해주고 싶을 때 true
   })
 );
 // 프론트에서 보낸 데이터를 req.body 안에다가 넣어주는 역할을 한다
@@ -48,14 +51,7 @@ app.get("/", (req, res) => {
   res.send("hello api");
 });
 
-app.get("/posts", (req, res) => {
-  res.json([
-    { id: 1, content: "hello" },
-    { id: 2, content: "hello2" },
-    { id: 3, content: "hello3" },
-  ]);
-});
-
+app.use("/posts", postsRouter);
 app.use("/post", postRouter);
 app.use("/user", userRouter);
 
