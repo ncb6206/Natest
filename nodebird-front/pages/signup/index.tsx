@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { Form, Input, Checkbox, Button, Modal } from "antd";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import useInput from "../../src/components/hooks/useInput";
+import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { SIGN_UP_REQUEST } from "../../reducers/user";
+import { SIGN_UP_REQUEST } from "../../src/commons/reducers/user";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -28,7 +28,7 @@ export default function Signup() {
 
   useEffect(() => {
     if (signUpDone) {
-      router.push("/");
+      router.replace("/");
     }
   }, [signUpDone]);
 
@@ -38,22 +38,12 @@ export default function Signup() {
     }
   }, [signUpError]);
 
-  const [passwordCheck, setPasswordCheck] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [term, setTerm] = useState(false);
-  const [termError, setTermError] = useState(false);
-
   const [email, onChangeEmail] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
   const [password, onChangePassword] = useInput("");
 
-  useEffect(() => {
-    if (me) {
-      alert("로그인했으니 메인페이지로 이동합니다.");
-      router.push("/");
-    }
-  }, [me && me.id]);
-
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const onChangePasswordCheck = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setPasswordCheck(e.target.value);
@@ -62,9 +52,11 @@ export default function Signup() {
     [password]
   );
 
+  const [term, setTerm] = useState(false);
+  const [termError, setTermError] = useState(false);
   const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setTermError(false);
     setTerm(e.target.checked);
+    setTermError(false);
   }, []);
 
   const onSubmit = useCallback(() => {
@@ -74,7 +66,7 @@ export default function Signup() {
     if (!term) {
       return setTermError(true);
     }
-    return dispatch({
+    dispatch({
       type: SIGN_UP_REQUEST,
       data: {
         email,
@@ -91,9 +83,9 @@ export default function Signup() {
       </Head>
       <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
-          <label htmlFor="user-email">아이디</label>
+          <label htmlFor="user-email">이메일</label>
           <br />
-          <Input name="user-email" value={email} onChange={onChangeEmail} required />
+          <Input name="user-email" type="email" value={email} onChange={onChangeEmail} required />
         </div>
         <div>
           <label htmlFor="user-nickname">닉네임</label>

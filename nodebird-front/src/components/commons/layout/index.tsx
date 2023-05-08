@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Input, Menu, Row, Col } from "antd";
 import { LayoutHeader } from "./header/LayoutHeader";
 import { useState } from "react";
-import UserProfile from "../units/userProfile/UserProfile";
-import LoginForm from "../units/form/LoginForm";
+import UserProfile from "../../units/userProfile/UserProfile";
+import LoginForm from "../../units/form/LoginForm";
 import { useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
 

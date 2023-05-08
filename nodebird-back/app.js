@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const path = require("path");
+
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
@@ -19,7 +21,6 @@ db.sequelize
     console.log("db 연결 성공");
   })
   .catch(console.error);
-
 passportConfig();
 
 app.use(morgan("dev"));
@@ -29,15 +30,16 @@ app.use(
     credentials: true, // cookie를 같이 전달해주고 싶을 때 true
   })
 );
+app.use("/", express.static(path.join(__dirname, "uploads")));
 // 프론트에서 보낸 데이터를 req.body 안에다가 넣어주는 역할을 한다
 app.use(express.json()); // json데이터를 req안에 넣어줌
 app.use(express.urlencoded({ extended: true })); // form으로 넘어온 데이터를 처리해서 req안에 넣어줌
-app.use(cookieParser("nodebirdsecret"));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
     saveUninitialized: false,
     resave: false,
-    secret: "process.env.COOKIE_SECRET",
+    secret: process.env.COOKIE_SECRET,
   })
 ); // 세션 설정
 app.use(passport.initialize());
@@ -46,11 +48,7 @@ app.use(passport.session());
 app.get("/", (req, res) => {
   res.send("hello express");
 });
-
-app.get("/", (req, res) => {
-  res.send("hello api");
-});
-
+// API는 다른 서비스가 내 서비스의 기능을 실행할 수 있게 열어둔 창구
 app.use("/posts", postsRouter);
 app.use("/post", postRouter);
 app.use("/user", userRouter);

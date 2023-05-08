@@ -1,5 +1,5 @@
-import { CHANGE_NICKNAME_REQUEST } from "../../../../../reducers/user";
-import useInput from "../../../../../src/components/hooks/useInput";
+import { CHANGE_NICKNAME_REQUEST } from "../../../../src/commons/reducers/user";
+import useInput from "../../commons/hooks/useInput";
 import { Form, Input } from "antd";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";

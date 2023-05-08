@@ -1,13 +1,14 @@
-import { ADD_COMMENT_REQUEST } from "../../../../../reducers/post";
-import useInput from "../../../../../src/components/hooks/useInput";
 import { Button, Form, Input } from "antd";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import useInput from "../../commons/hooks/useInput";
+import { ADD_COMMENT_REQUEST } from "../../../commons/reducers/post";
+
 export default function CommentForm({ post }) {
   const dispatch = useDispatch();
-  const { addCommentDone, addCommentLoading } = useSelector((state) => state.post);
   const id = useSelector((state) => state.user.me?.id);
+  const { addCommentDone, addCommentLoading } = useSelector((state) => state.post);
   const [commentText, onChangeCommentText, setCommentText] = useInput("");
 
   useEffect(() => {
@@ -19,17 +20,17 @@ export default function CommentForm({ post }) {
   const onSubmitComment = useCallback(() => {
     dispatch({
       type: ADD_COMMENT_REQUEST,
-      data: { content: commentText, userId: id, postId: post.id },
+      data: { content: commentText, postId: post.id, userId: id },
     });
   }, [commentText, id]);
 
   return (
     <Form onFinish={onSubmitComment}>
-      <Form.Item style={{ position: "relative", margin: 0, zIndex: 1 }}>
+      <Form.Item style={{ position: "relative", margin: 0 }}>
         <Input.TextArea value={commentText} onChange={onChangeCommentText} rows={4} />
         <Button
           type="primary"
-          style={{ position: "absolute", right: 0, bottom: -40 }}
+          style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
           htmlType="submit"
           loading={addCommentLoading}
         >

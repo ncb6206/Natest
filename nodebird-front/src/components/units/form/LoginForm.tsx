@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { LOG_IN_REQUEST } from "../../../../../reducers/user";
-import useInput from "../../../../../src/components/hooks/useInput";
+import { LOG_IN_REQUEST } from "../../../../src/commons/reducers/user";
+import useInput from "../../commons/hooks/useInput";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -34,7 +34,7 @@ export default function LoginForm() {
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>
-        <label htmlFor="user-email">아이디</label>
+        <label htmlFor="user-email">이메일</label>
         <br />
         <Input name="user-email" type="email" value={email} onChange={onChangeEmail} required />
       </div>

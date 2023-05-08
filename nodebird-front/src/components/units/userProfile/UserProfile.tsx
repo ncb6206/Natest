@@ -1,11 +1,11 @@
-import { LOG_OUT_REQUEST } from "../../../../../reducers/user";
+import { LOG_OUT_REQUEST } from "../../../..//src/commons/reducers/user";
 import { Card, Avatar, Button } from "antd";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function UserProfile() {
-  const { me, logOutLoading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const { me, logOutLoading } = useSelector((state) => state.user);
 
   const onLogOut = useCallback(() => {
     dispatch({
@@ -19,17 +19,17 @@ export default function UserProfile() {
         <div key="twit">
           짹짹
           <br />
-          {me?.Posts?.length || 0}
+          {me.Posts.length}
         </div>,
         <div key="followings">
           팔로잉
           <br />
-          {me?.Followings?.length || 0}
+          {me.Followings.length}
         </div>,
         <div key="followers">
           팔로워
           <br />
-          {me?.Followers?.length || 0}
+          {me.Followers.length}
         </div>,
       ]}
     >

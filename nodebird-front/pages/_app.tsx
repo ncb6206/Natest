@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import "antd/dist/antd.css";
 
-import wrapper from "../store/configureStore";
+import wrapper from "../src/commons/store/configureStore";
 
 function App({ Component, pageProps }: AppProps) {
   return (

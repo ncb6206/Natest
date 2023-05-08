@@ -1,5 +1,5 @@
 import axios from "axios";
-import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
+import { all, call, fork, put, takeLatest } from "redux-saga/effects";
 
 import {
   LOAD_MY_INFO_FAILURE,
@@ -29,7 +29,30 @@ import {
   LOAD_FOLLOWINGS_FAILURE,
   LOAD_FOLLOWERS_SUCCESS,
   LOAD_FOLLOWERS_FAILURE,
+  REMOVE_FOLLOWER_SUCCESS,
+  REMOVE_FOLLOWER_FAILURE,
+  REMOVE_FOLLOWER_REQUEST,
 } from "../reducers/user";
+
+function removeFollowerAPI(data) {
+  return axios.delete(`/user/followers/${data}`);
+}
+
+function* removeFollower(action) {
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function loadFollowersAPI(data) {
   return axios.get("/user/followers", data);
@@ -98,7 +121,6 @@ function loadMyInfoAPI() {
 function* loadMyInfo(action) {
   try {
     const result = yield call(loadMyInfoAPI, action.data);
-    console.log(result);
     yield put({
       type: LOAD_MY_INFO_SUCCESS,
       data: result.data,
@@ -119,7 +141,6 @@ function logInAPI(data) {
 function* logIn(action) {
   try {
     const result = yield call(logInAPI, action.data);
-    console.log(result);
     yield put({
       type: LOG_IN_SUCCESS,
       data: result.data,
@@ -193,7 +214,7 @@ function* follow(action) {
 }
 
 function unfollowAPI(data) {
-  return axios.delete(`/user/${data}/unfollow`);
+  return axios.delete(`/user/${data}/follow`);
 }
 
 function* unfollow(action) {
@@ -210,6 +231,10 @@ function* unfollow(action) {
       error: err.response.data,
     });
   }
+}
+
+function* watchRemoveFollower() {
+  yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
 function* watchLoadFollowers() {
@@ -250,6 +275,7 @@ function* watchSignUp() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchRemoveFollower),
     fork(watchLoadFollowings),
     fork(watchLoadFollowers),
     fork(watchChangeNickname),

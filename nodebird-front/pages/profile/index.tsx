@@ -1,11 +1,11 @@
-import Head from "next/head";
-
-import NicknameEditForm from "../../src/components/commons/units/form/NicknameEditForm";
-import FollowList from "../../src/components/commons/units/list/FollowList";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import Head from "next/head";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWERS_REQUEST } from "../../reducers/user";
+
+import NicknameEditForm from "../../src/components/units/form/NicknameEditForm";
+import FollowList from "../../src/components/units/list/FollowList";
+import { LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWERS_REQUEST } from "../../src/commons/reducers/user";
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ export default function Profile() {
     dispatch({
       type: LOAD_FOLLOWINGS_REQUEST,
     });
-  });
+  }, []);
 
   useEffect(() => {
     if (!(me && me.id)) {
@@ -38,7 +38,7 @@ export default function Profile() {
       </Head>
       <NicknameEditForm />
       <FollowList header="팔로잉 목록" data={me.Followings} />
-      <FollowList header="팔로워 목록" data={me.followers} />
+      <FollowList header="팔로워 목록" data={me.Followers} />
     </>
   );
 }
