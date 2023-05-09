@@ -1,31 +1,35 @@
-const { DataTypes } = require("sequelize");
+const DataTypes = require("sequelize");
+const { Model } = DataTypes;
 
-module.exports = (sequelize, DataType) => {
-  const User = sequelize.define(
-    "User",
-    {
-      // MySQL에는 users 테이블 생성
-      // id가 기본적으로 들어있다.
-      email: {
-        type: DataTypes.STRING(30), // 데이터 타입은 STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME 이 존재
-        allowNull: false, // 필수
-        unique: true, // 고유한 값
+module.exports = class User extends Model {
+  static init(sequelize) {
+    return super.init(
+      {
+        // id가 기본적으로 들어있다.
+        email: {
+          type: DataTypes.STRING(30), // 데이터 타입은 STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME 이 존재
+          allowNull: false, // 필수
+          unique: true, // 고유한 값
+        },
+        nickname: {
+          type: DataTypes.STRING(30),
+          allowNull: false, // 필수
+        },
+        password: {
+          type: DataTypes.STRING(100),
+          allowNull: false, // 필수
+        },
       },
-      nickname: {
-        type: DataTypes.STRING(30),
-        allowNull: false, // 필수
-      },
-      password: {
-        type: DataTypes.STRING(100),
-        allowNull: false, // 필수
-      },
-    },
-    {
-      charset: "utf8",
-      collate: "utf8_general_ci", // 한글 저장
-    }
-  );
-  User.associate = (db) => {
+      {
+        modelName: "User",
+        tableName: "users",
+        charset: "utf8",
+        collate: "utf8_general_ci", // 한글 저장
+        sequelize,
+      }
+    );
+  }
+  static associate = (db) => {
     db.User.hasMany(db.Post); // 사람이 Post를 여러개 가질수 있다
     db.User.hasMany(db.Comment);
     db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" });
@@ -40,5 +44,4 @@ module.exports = (sequelize, DataType) => {
       foreignKey: "FollowerId",
     });
   };
-  return User;
 };
