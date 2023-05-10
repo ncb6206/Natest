@@ -29,6 +29,7 @@
     "redux-saga": "^1.2.3",
     "shortid": "^2.2.16",
     "styled-components": "^5.3.10",
+    "swr": "^2.1.5",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
