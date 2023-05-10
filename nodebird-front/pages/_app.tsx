@@ -10,6 +10,7 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>NodeBird</title>
+        <link rel="shortcut icon" href="/favicon.png" />
       </Head>
       <Layout>
         <Component {...pageProps} />
