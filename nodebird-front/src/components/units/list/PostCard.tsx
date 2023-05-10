@@ -20,6 +20,9 @@ import {
 import styled from "styled-components";
 import FollowButton from "../button/FollowButton";
 import Link from "next/link";
+import moment from "moment";
+
+moment.locale("ko");
 
 interface IPostCard {
   post: {
@@ -113,7 +116,7 @@ export default function PostCard({ post }) {
             key="more"
             content={
               <Button.Group>
-                {id && post.UserId === id ? (
+                {id && post.User.id === id ? (
                   <>
                     <Button>수정</Button>
                     <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>
@@ -134,18 +137,34 @@ export default function PostCard({ post }) {
       >
         {post.RetweetId && post.Retweet ? (
           <Card cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}>
+            <span style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD.")}</span>
             <Card.Meta
-              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+              avatar={
+                <Link href={`/user/${post.Retweet.User.id}`}>
+                  <a>
+                    <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
               title={post.Retweet.User.nickname}
               description={<PostCardContent postData={post.Retweet.content} />}
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-            title={post.User.nickname}
-            description={<PostCardContent postData={post.content} />}
-          />
+          <>
+            <span style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD.")}</span>
+            <Card.Meta
+              avatar={
+                <Link href={`/user/${post.User.id}`}>
+                  <a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
+          </>
         )}
       </Card>
       {commentFormOpened && (
@@ -159,7 +178,13 @@ export default function PostCard({ post }) {
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link href={`/user/${item.User.id}`}>
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
               </li>

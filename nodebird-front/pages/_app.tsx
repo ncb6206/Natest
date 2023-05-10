@@ -9,7 +9,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>NodeBird</title>
+        <title>Natest</title>
         <link rel="shortcut icon" href="/favicon.png" />
       </Head>
       <Layout>

@@ -12,7 +12,7 @@ export default function PostCardContent({ postData }: IPostData) {
         if (v.match(/(#[^\s#]+)/)) {
           return (
             <Link href={`https://www.google.com/search?q=${v.slice(1)}`} key={v}>
-              {v}
+              <a>{v}</a>
             </Link>
           );
         }

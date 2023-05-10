@@ -5,7 +5,10 @@ import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { SIGN_UP_REQUEST } from "../../src/commons/reducers/user";
+import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from "../../src/commons/reducers/user";
+import wrapper from "../../src/commons/store/configureStore";
+import axios from "axios";
+import { END } from "redux-saga";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -19,6 +22,15 @@ export default function Signup() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { signUpLoading, signUpDone, me, signUpError } = useSelector((state) => state.user);
+
+  const [email, onChangeEmail] = useInput("");
+  const [nickname, onChangeNickname] = useInput("");
+  const [password, onChangePassword] = useInput("");
+
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [term, setTerm] = useState(false);
+  const [termError, setTermError] = useState(false);
 
   useEffect(() => {
     if (me && me.id) {
@@ -38,12 +50,6 @@ export default function Signup() {
     }
   }, [signUpError]);
 
-  const [email, onChangeEmail] = useInput("");
-  const [nickname, onChangeNickname] = useInput("");
-  const [password, onChangePassword] = useInput("");
-
-  const [passwordCheck, setPasswordCheck] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
   const onChangePasswordCheck = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setPasswordCheck(e.target.value);
@@ -52,8 +58,6 @@ export default function Signup() {
     [password]
   );
 
-  const [term, setTerm] = useState(false);
-  const [termError, setTermError] = useState(false);
   const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setTerm(e.target.checked);
     setTermError(false);
@@ -66,7 +70,7 @@ export default function Signup() {
     if (!term) {
       return setTermError(true);
     }
-    dispatch({
+    return dispatch({
       type: SIGN_UP_REQUEST,
       data: {
         email,
@@ -74,12 +78,12 @@ export default function Signup() {
         nickname,
       },
     });
-  }, [email, password, passwordCheck, term]);
+  }, [email, nickname, password, passwordCheck, term]);
 
   return (
     <>
       <Head>
-        <title> 회원가입 | NodeBird</title>
+        <title> 회원가입 | Natest</title>
       </Head>
       <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
@@ -130,3 +134,19 @@ export default function Signup() {
     </>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log("getServerSideProps start");
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : "";
+  axios.defaults.headers.Cookie = "";
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch(END);
+  console.log("getServerSideProps end");
+  await context.store.sagaTask.toPromise();
+});

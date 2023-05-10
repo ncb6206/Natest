@@ -52,7 +52,7 @@ export default function PostImages({ images }) {
       <div>
         <img
           role="presentation"
-          width="50%"
+          style={{ width: "50%" }}
           src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
           onClick={onZoom}

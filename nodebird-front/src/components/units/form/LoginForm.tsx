@@ -54,7 +54,9 @@ export default function LoginForm() {
           로그인
         </Button>
         <Link href="/signup">
-          <Button>회원가입</Button>
+          <a>
+            <Button>회원가입</Button>
+          </a>
         </Link>
       </ButtonWrapper>
     </FormWrapper>

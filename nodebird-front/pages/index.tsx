@@ -6,7 +6,7 @@ import PostCard from "../src/components/units/list/PostCard";
 import { LOAD_POSTS_REQUEST } from "../src/commons/reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../src/commons/reducers/user";
 import { Modal } from "antd";
-import wrapper from "@/src/commons/store/configureStore";
+import wrapper from "../src/commons/store/configureStore";
 import axios from "axios";
 import { END } from "redux-saga";
 

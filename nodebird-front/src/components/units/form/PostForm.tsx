@@ -48,12 +48,15 @@ export default function PostForm() {
     });
   }, []);
 
-  const onRemoveImage = useCallback((index) => () => {
-    dispatch({
-      type: REMOVE_IMAGE,
-      data: index,
-    });
-  });
+  const onRemoveImage = useCallback(
+    (index) => () => {
+      dispatch({
+        type: REMOVE_IMAGE,
+        data: index,
+      });
+    },
+    []
+  );
 
   return (
     <Form style={{ margin: "10px 0 20px" }} encType="multipart/form-data" onFinish={onSubmit}>
