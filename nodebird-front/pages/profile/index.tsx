@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, Store } from "react-redux";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 

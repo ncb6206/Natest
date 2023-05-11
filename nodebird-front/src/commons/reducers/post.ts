@@ -34,6 +34,8 @@ export const initialState = {
   retweetError: null,
 };
 
+export type IPostReducerState = typeof initialState;
+
 export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
 export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
 export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";

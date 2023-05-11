@@ -37,11 +37,24 @@ import {
   LOAD_USER_FAILURE,
 } from "../reducers/user";
 
-function removeFollowerAPI(data) {
+class CustomError_Class extends Error {
+  response?: {
+    data: any;
+    status: number;
+    headers: string;
+  };
+}
+
+interface RemoveFollowerAction {
+  type: string;
+  data: string;
+}
+
+function removeFollowerAPI(data: string) {
   return axios.delete(`/user/followers/${data}`);
 }
 
-function* removeFollower(action) {
+function* removeFollower(action: RemoveFollowerAction) {
   try {
     const result = yield call(removeFollowerAPI, action.data);
     yield put({
@@ -52,7 +65,7 @@ function* removeFollower(action) {
     console.error(err);
     yield put({
       type: REMOVE_FOLLOWER_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -72,7 +85,7 @@ function* loadFollowers(action) {
     console.error(err);
     yield put({
       type: LOAD_FOLLOWERS_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -92,7 +105,7 @@ function* loadFollowings(action) {
     console.error(err);
     yield put({
       type: LOAD_FOLLOWINGS_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -112,7 +125,7 @@ function* changeNickname(action) {
     console.error(err);
     yield put({
       type: CHANGE_NICKNAME_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -132,7 +145,7 @@ function* loadMyInfo() {
     console.error(err);
     yield put({
       type: LOAD_MY_INFO_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -152,7 +165,7 @@ function* loadUser(action) {
     console.error(err);
     yield put({
       type: LOAD_USER_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -172,7 +185,7 @@ function* logIn(action) {
     console.error(err);
     yield put({
       type: LOG_IN_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -191,7 +204,7 @@ function* logOut() {
     console.error(err);
     yield put({
       type: LOG_OUT_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -211,7 +224,7 @@ function* signUp(action) {
     console.error(err);
     yield put({
       type: SIGN_UP_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -231,7 +244,7 @@ function* follow(action) {
     console.error(err);
     yield put({
       type: FOLLOW_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
@@ -251,7 +264,7 @@ function* unfollow(action) {
     console.error(err);
     yield put({
       type: UNFOLLOW_FAILURE,
-      error: err.response.data,
+      error: err instanceof CustomError_Class && err.response?.data,
     });
   }
 }
