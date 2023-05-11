@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { LOAD_USER_POSTS_REQUEST } from "@/src/commons/reducers/post";
+import { LOAD_USER_POSTS_REQUEST } from "../../src/commons/reducers/post";
 import Head from "next/head";
 import { Avatar, Card } from "antd";
-import PostCard from "@/src/components/units/list/PostCard";
-import wrapper from "@/src/commons/store/configureStore";
+import PostCard from "../../src/components/units/list/PostCard";
+import wrapper from "../../src/commons/store/configureStore";
 import axios from "axios";
-import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from "@/src/commons/reducers/user";
+import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from "../../src/commons/reducers/user";
 import { END } from "redux-saga";
 
 export default function User() {

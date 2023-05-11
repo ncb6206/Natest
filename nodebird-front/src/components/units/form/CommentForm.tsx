@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,6 +18,12 @@ export default function CommentForm({ post }) {
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
+    if (!id) {
+      return Modal.error({ content: "로그인이 필요합니다." });
+    }
+    if (!commentText) {
+      return Modal.error({ content: "메세지를 입력해주세요!" });
+    }
     dispatch({
       type: ADD_COMMENT_REQUEST,
       data: { content: commentText, postId: post.id, userId: id },

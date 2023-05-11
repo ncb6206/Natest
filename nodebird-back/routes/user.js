@@ -252,10 +252,16 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/logout", isLoggedIn, (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.send("ok");
+router.post("/logout", isLoggedIn, (req, res, next) => {
+  req.logout((error) => {
+    if (error) {
+      console.error(error);
+      return next(error);
+    }
+    req.session.destroy();
+    res.clearCookie("connect.sid");
+    res.status(200).send("server ok: 로그아웃 완료");
+  });
 });
 
 router.patch("/nickname", isLoggedIn, async (req, res, next) => {

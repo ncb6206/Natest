@@ -1,5 +1,5 @@
 import { produce } from "immer";
 
-export default (...args: [any]) => {
+export default (...args) => {
   return produce(...args);
 };

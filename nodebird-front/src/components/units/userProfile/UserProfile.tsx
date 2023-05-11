@@ -1,17 +1,25 @@
 import { LOG_OUT_REQUEST } from "../../../..//src/commons/reducers/user";
-import { Card, Avatar, Button } from "antd";
+import { Card, Avatar, Button, Modal } from "antd";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function UserProfile() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
-
   const onLogOut = useCallback(() => {
-    dispatch({
-      type: LOG_OUT_REQUEST,
-    });
+    try {
+      dispatch({
+        type: LOG_OUT_REQUEST,
+      });
+      router.replace("/");
+      Modal.success({ content: "로그아웃되었습니다." });
+    } catch (error) {
+      console.log(error);
+      Modal.error({ content: "로그아웃 실패하였습니다." });
+    }
   }, []);
 
   return (

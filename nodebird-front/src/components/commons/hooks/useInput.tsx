@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useState } from "react";
 
-export default function useInput(initialValue: string | null = null) {
+export default function useInput(initialValue: string) {
   const [value, setter] = useState(initialValue);
   const handler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setter(e.target.value);
