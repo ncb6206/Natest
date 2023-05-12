@@ -1,11 +1,11 @@
-import { LOAD_HASHTAG_POSTS_REQUEST } from "../../src/commons/reducers/post";
-import PostCard from "../../src/components/units/list/PostCard";
+import { LOAD_HASHTAG_POSTS_REQUEST } from "../../../src/commons/reducers/post";
+import PostCard from "../../../src/components/units/list/PostCard";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import wrapper from "../../src/commons/store/configureStore";
+import wrapper from "../../../src/commons/store/configureStore";
 import axios from "axios";
-import { LOAD_MY_INFO_REQUEST } from "../../src/commons/reducers/user";
+import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
 import { END } from "redux-saga";
 
 export default function Hashtag() {

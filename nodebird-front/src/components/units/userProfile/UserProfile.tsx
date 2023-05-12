@@ -17,7 +17,7 @@ export default function UserProfile() {
       router.replace("/");
       Modal.success({ content: "로그아웃되었습니다." });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Modal.error({ content: "로그아웃 실패하였습니다." });
     }
   }, []);

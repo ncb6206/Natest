@@ -19,18 +19,18 @@ export function LayoutHeader() {
 
   return (
     <>
-      <Menu mode="horizontal">
-        <Menu.Item key="home">
+      <Menu mode="horizontal" selectedKeys={[router.pathname]}>
+        <Menu.Item key="/">
           <Link href="/">
             <a>노드버드</a>
           </Link>
         </Menu.Item>
-        <Menu.Item key="profile">
+        <Menu.Item key="/profile">
           <Link href="/profile">
             <a>프로필</a>
           </Link>
         </Menu.Item>
-        <Menu.Item key="mail">
+        <Menu.Item key="/mail">
           <SearchInput
             enterButton
             value={searchInput}

@@ -41,6 +41,7 @@ export default function Signup() {
   useEffect(() => {
     if (signUpDone) {
       router.replace("/");
+      Modal.success({ content: "회원가입되었습니다." });
     }
   }, [signUpDone]);
 

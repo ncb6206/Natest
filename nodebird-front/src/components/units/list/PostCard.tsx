@@ -46,7 +46,7 @@ interface IPostCard {
 }
 
 const CardWrapper = styled.div`
-  margin-bottom: 20px;
+  margin: 10px 0;
 `;
 
 export default function PostCard({ post }) {

@@ -13,6 +13,7 @@ router.get("/", async (req, res, next) => {
       // 초기 로딩이 아닐 때
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
     } // 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+    // 가장 최근 10개의 게시물을 가져오고, `createdAt`와 `Comment.createdAt`를 기준으로 내림차순 정렬합니다.
     const posts = await Post.findAll({
       where,
       limit: 10,

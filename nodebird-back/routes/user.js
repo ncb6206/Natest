@@ -121,7 +121,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.get("/:id/posts", async (req, res, next) => {
-  // GET /user//posts
+  // GET /user/2/posts
   try {
     const user = await User.findOne({ where: { id: req.params.id } });
     if (user) {
@@ -133,7 +133,15 @@ router.get("/:id/posts", async (req, res, next) => {
       const posts = await user.getPosts({
         where,
         limit: 10,
+        order: [
+          ["createdAt", "DESC"],
+          [Comment, "createdAt", "DESC"],
+        ],
         include: [
+          {
+            model: User,
+            attributes: ["id", "nickname"],
+          },
           {
             model: Image,
           },
@@ -143,12 +151,9 @@ router.get("/:id/posts", async (req, res, next) => {
               {
                 model: User,
                 attributes: ["id", "nickname"],
+                order: [["createdAt", "DESC"]],
               },
             ],
-          },
-          {
-            model: User,
-            attributes: ["id", "nickname"],
           },
           {
             model: User,

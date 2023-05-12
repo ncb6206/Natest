@@ -38,14 +38,6 @@ import {
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
-class CustomError_Class extends Error {
-  response?: {
-    data: any;
-    status: number;
-    headers: string;
-  };
-}
-
 function retweetAPI(data) {
   return axios.post(`/post/${data}/retweet`);
 }
@@ -61,7 +53,7 @@ function* retweet(action) {
     console.error(err);
     yield put({
       type: RETWEET_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -81,7 +73,7 @@ function* uploadImages(action) {
     console.error(err);
     yield put({
       type: UPLOAD_IMAGES_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -101,7 +93,7 @@ function* likePost(action) {
     console.error(err);
     yield put({
       type: LIKE_POST_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -121,7 +113,7 @@ function* unlikePost(action) {
     console.error(err);
     yield put({
       type: UNLIKE_POST_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -141,7 +133,7 @@ function* loadPost(action) {
     console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -161,7 +153,7 @@ function* loadPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_POSTS_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -181,7 +173,7 @@ function* loadUserPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_USER_POSTS_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -200,7 +192,7 @@ function* loadHashtagPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_HASHTAG_POSTS_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -224,7 +216,7 @@ function* addPost(action) {
     console.error(err);
     yield put({
       type: ADD_POST_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -248,7 +240,7 @@ function* removePost(action) {
     console.error(err);
     yield put({
       type: REMOVE_POST_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
@@ -268,7 +260,7 @@ function* addComment(action) {
     console.error(err);
     yield put({
       type: ADD_COMMENT_FAILURE,
-      error: err instanceof CustomError_Class && err.response?.data,
+      error: err.response?.data,
     });
   }
 }
