@@ -54,22 +54,22 @@ export default function Home() {
   //   });
   // }, []);
 
-  function onLoadMore() {
-    if (!hasMorePosts) return;
+  // function onLoadMore() {
+  //   if (!hasMorePosts) return;
 
-    if (hasMorePosts && !loadPostsLoading) {
-      const lastId = mainPosts[mainPosts.length - 1]?.id;
-      dispatch({
-        type: LOAD_POSTS_REQUEST,
-        lastId,
-      });
-    }
-  }
+  //   if (hasMorePosts && !loadPostsLoading) {
+  //     const lastId = mainPosts[mainPosts.length - 1]?.id;
+  //     dispatch({
+  //       type: LOAD_POSTS_REQUEST,
+  //       lastId,
+  //     });
+  //   }
+  // }
 
   return (
     <>
       {me && <PostForm />}
-      <InfiniteScroll
+      {/* <InfiniteScroll
         pageStart={0}
         loadMore={onLoadMore}
         hasMore={hasMorePosts}
@@ -78,18 +78,18 @@ export default function Home() {
             로딩중입니다 ...
           </div>
         }
-      >
-        {mainPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </InfiniteScroll>
+      > */}
+      {mainPosts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
+      {/* </InfiniteScroll> */}
     </>
   );
 }
 
-export const getStaticProps = async () => {
-  const queryClient = new QueryClient();
-};
+// export const getStaticProps = async () => {
+//   const queryClient = new QueryClient();
+// };
 
 // export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
 //   console.log("getServerSideProps start");

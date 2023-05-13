@@ -1,4 +1,3 @@
-import { LOAD_USER_REQUEST } from "@/src/commons/reducers/user";
 import wrapper from "@/src/commons/store/configureStore";
 import { Avatar, Card } from "antd";
 import Head from "next/head";
@@ -44,12 +43,12 @@ export default function Profile() {
   );
 }
 
-export const getStaticProps = wrapper.getStaticProps(async (context) => {
-  console.log("getStaticProps");
-  context.store.dispatch({
-    type: LOAD_USER_REQUEST,
-    data: 1,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
+// export const getStaticProps = wrapper.getStaticProps(async (context) => {
+//   console.log("getStaticProps");
+//   context.store.dispatch({
+//     type: LOAD_USER_REQUEST,
+//     data: 1,
+//   });
+//   context.store.dispatch(END);
+//   await context.store.sagaTask.toPromise();
+// });
