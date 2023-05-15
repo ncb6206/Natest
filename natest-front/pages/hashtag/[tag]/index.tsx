@@ -1,9 +1,8 @@
-import { LOAD_HASHTAG_POSTS_REQUEST } from "../../../src/commons/reducers/post";
+import { LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts } from "../../../src/commons/reducers/post";
 import PostCard from "../../../src/components/units/list/PostCard";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import wrapper from "../../../src/commons/store/configureStore";
 import axios from "axios";
 import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
 import { END } from "redux-saga";
@@ -12,7 +11,7 @@ export default function Hashtag() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { tag } = router.query;
-  const { mainPosts, hasMorePosts, loadHashtagPostsLoading } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
 
   useEffect(() => {
     const onScroll = () => {
@@ -20,12 +19,13 @@ export default function Hashtag() {
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 300
       ) {
-        if (hasMorePosts && !loadHashtagPostsLoading) {
-          dispatch({
-            type: LOAD_HASHTAG_POSTS_REQUEST,
-            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-            data: tag,
-          });
+        if (hasMorePosts && !loadPostsLoading) {
+          dispatch(
+            loadHashtagPosts({
+              lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+              tag,
+            })
+          );
         }
       }
     };
@@ -33,7 +33,7 @@ export default function Hashtag() {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, [mainPosts.length, hasMorePosts, tag]);
+  }, [mainPosts.length, hasMorePosts, tag, loadPostsLoading]);
 
   return (
     <>

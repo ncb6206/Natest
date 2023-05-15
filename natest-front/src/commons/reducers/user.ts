@@ -1,7 +1,5 @@
-import { useRouter } from "next/router";
-import produce from "../../../util/produce";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
@@ -82,7 +80,7 @@ export const unfollow = createAsyncThunk("user/unfollow", async (data) => {
   return response.data;
 });
 
-export const logout = createAsyncThunk("user/logout", async (data) => {
+export const logout = createAsyncThunk("user/logout", async () => {
   const response = await axios.post(`/user/logout`);
   return response.data;
 });

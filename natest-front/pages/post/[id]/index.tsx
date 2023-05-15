@@ -1,6 +1,5 @@
 import { LOAD_POST_REQUEST } from "../../../src/commons/reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
-import wrapper from "../../../src/commons/store/configureStore";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";

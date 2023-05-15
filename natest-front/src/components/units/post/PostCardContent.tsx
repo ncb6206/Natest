@@ -8,7 +8,7 @@ export default function PostCardContent({ postData }: IPostData) {
   // 첫 번째 게시글 #해시태그 #익스프레스
   return (
     <div>
-      {postData.split(/(#[^\s#]+)/g).map((v) => {
+      {postData?.split(/(#[^\s#]+)/g).map((v) => {
         if (v.match(/(#[^\s#]+)/)) {
           return (
             <Link href={`https://www.google.com/search?q=${v.slice(1)}`} key={v}>

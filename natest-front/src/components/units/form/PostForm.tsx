@@ -1,8 +1,4 @@
-import {
-  ADD_POST_REQUEST,
-  REMOVE_IMAGE,
-  UPLOAD_IMAGES_REQUEST,
-} from "../../../commons/reducers/post";
+import postSlice, { addPost, uploadImage } from "../../../commons/reducers/post";
 import { Button, Form, Input, Modal } from "antd";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,7 +24,7 @@ export default function PostForm() {
       formData.append("image", p);
     });
     formData.append("content", text);
-    return dispatch({ type: ADD_POST_REQUEST, data: formData });
+    return dispatch(addPost(formData));
   }, [text, imagePaths]);
 
   const imageInput = useRef();
@@ -42,18 +38,12 @@ export default function PostForm() {
     [].forEach.call(e.target.files, (f) => {
       imageFormData.append("image", f);
     });
-    dispatch({
-      type: UPLOAD_IMAGES_REQUEST,
-      data: imageFormData,
-    });
+    dispatch(uploadImage(imageFormData));
   }, []);
 
   const onRemoveImage = useCallback(
     (index) => () => {
-      dispatch({
-        type: REMOVE_IMAGE,
-        data: index,
-      });
+      dispatch(postSlice.actions.removeImage(index));
     },
     []
   );

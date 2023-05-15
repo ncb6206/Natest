@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import useInput from "../../commons/hooks/useInput";
-import { ADD_COMMENT_REQUEST } from "../../../commons/reducers/post";
+import { addComment } from "../../../commons/reducers/post";
 
 export default function CommentForm({ post }) {
   const dispatch = useDispatch();
@@ -24,10 +24,7 @@ export default function CommentForm({ post }) {
     if (!commentText) {
       return Modal.error({ content: "메세지를 입력해주세요!" });
     }
-    dispatch({
-      type: ADD_COMMENT_REQUEST,
-      data: { content: commentText, postId: post.id, userId: id },
-    });
+    dispatch(addComment({ content: commentText, postId: post.id, userId: id }));
   }, [commentText, id]);
 
   return (

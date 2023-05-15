@@ -1,4 +1,4 @@
-import { LOG_OUT_REQUEST } from "../../../..//src/commons/reducers/user";
+import { logout } from "../../../../src/commons/reducers/user";
 import { Card, Avatar, Button, Modal } from "antd";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,9 +11,7 @@ export default function UserProfile() {
   const { me, logOutLoading } = useSelector((state) => state.user);
   const onLogOut = useCallback(() => {
     try {
-      dispatch({
-        type: LOG_OUT_REQUEST,
-      });
+      dispatch(logout());
       router.replace("/");
       Modal.success({ content: "로그아웃되었습니다." });
     } catch (error) {
@@ -30,7 +28,7 @@ export default function UserProfile() {
             <a>
               짹짹
               <br />
-              {me.Posts.length}
+              {me?.Posts?.length}
             </a>
           </Link>
         </div>,
@@ -39,7 +37,7 @@ export default function UserProfile() {
             <a>
               팔로잉
               <br />
-              {me.Followings.length}
+              {me?.Followings?.length}
             </a>
           </Link>
         </div>,
@@ -48,13 +46,13 @@ export default function UserProfile() {
             <a>
               팔로워
               <br />
-              {me.Followers.length}
+              {me?.Followers?.length}
             </a>
           </Link>
         </div>,
       ]}
     >
-      <Card.Meta avatar={<Avatar>{me.nickname[0]}</Avatar>} title={me.nickname} />
+      <Card.Meta avatar={<Avatar>{me?.nickname}</Avatar>} title={me.nickname} />
       <Button onClick={onLogOut} loading={logOutLoading}>
         로그아웃
       </Button>

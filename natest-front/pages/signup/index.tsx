@@ -5,10 +5,8 @@ import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from "../../src/commons/reducers/user";
-import wrapper from "../../src/commons/store/configureStore";
+import { LOAD_MY_INFO_REQUEST, signup } from "../../src/commons/reducers/user";
 import axios from "axios";
-import { END } from "redux-saga";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -71,14 +69,7 @@ export default function Signup() {
     if (!term) {
       return setTermError(true);
     }
-    return dispatch({
-      type: SIGN_UP_REQUEST,
-      data: {
-        email,
-        password,
-        nickname,
-      },
-    });
+    return dispatch(signup({ email, password, nickname }));
   }, [email, nickname, password, passwordCheck, term]);
 
   return (

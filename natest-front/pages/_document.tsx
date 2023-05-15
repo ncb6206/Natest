@@ -1,7 +1,7 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
-class MyDocument extends Document {
+export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
@@ -22,6 +22,8 @@ class MyDocument extends Document {
           </>
         ),
       };
+    } catch (error) {
+      console.error(error);
     } finally {
       sheet.seal();
     }
@@ -38,5 +40,3 @@ class MyDocument extends Document {
     );
   }
 }
-
-export default MyDocument;

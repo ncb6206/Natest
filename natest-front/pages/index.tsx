@@ -3,14 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import PostForm from "../src/components/units/form/PostForm";
 import PostCard from "../src/components/units/list/PostCard";
-import { LOAD_POSTS_REQUEST } from "../src/commons/reducers/post";
-import { LOAD_MY_INFO_REQUEST } from "../src/commons/reducers/user";
+import { loadPosts } from "../src/commons/reducers/post";
 import { Modal } from "antd";
-import wrapper from "../src/commons/store/configureStore";
 import axios from "axios";
 import { END } from "redux-saga";
 import InfiniteScroll from "react-infinite-scroller";
 import { QueryClient } from "react-query";
+import { AsyncThunkAction } from "@reduxjs/toolkit";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -24,6 +23,15 @@ export default function Home() {
       Modal.error({ content: retweetError });
     }
   }, [retweetError]);
+
+  // function onLoadMore() {
+  //   if (!hasMorePosts) return;
+
+  //   if (hasMorePosts && !loadPostsLoading) {
+  //     const lastId = mainPosts[mainPosts.length - 1]?.id;
+  //     dispatch(loadPosts(lastId));
+  //   }
+  // }
 
   // useEffect(() => {
   //   const onScroll = () => {
@@ -54,18 +62,6 @@ export default function Home() {
   //   });
   // }, []);
 
-  // function onLoadMore() {
-  //   if (!hasMorePosts) return;
-
-  //   if (hasMorePosts && !loadPostsLoading) {
-  //     const lastId = mainPosts[mainPosts.length - 1]?.id;
-  //     dispatch({
-  //       type: LOAD_POSTS_REQUEST,
-  //       lastId,
-  //     });
-  //   }
-  // }
-
   return (
     <>
       {me && <PostForm />}
@@ -80,7 +76,7 @@ export default function Home() {
         }
       > */}
       {mainPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post?.id} post={post} />
       ))}
       {/* </InfiniteScroll> */}
     </>
@@ -89,6 +85,7 @@ export default function Home() {
 
 // export const getStaticProps = async () => {
 //   const queryClient = new QueryClient();
+//   const posts = await queryClient.fetchQuery("");
 // };
 
 // export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
@@ -99,9 +96,7 @@ export default function Home() {
 //   if (context.req && cookie) {
 //     axios.defaults.headers.Cookie = cookie;
 //   }
-//   context.store.dispatch({
-//     type: LOAD_POSTS_REQUEST,
-//   });
+//   context.store.dispatch(loadPosts);
 //   context.store.dispatch(END);
 //   console.log("getServerSideProps end");
 //   await context.store.sagaTask.toPromise();

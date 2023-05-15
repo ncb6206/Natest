@@ -2,8 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import reducer from "../reducers";
 
 function getServerState() {
-  return typeof document !== "undefined"
-    ? JSON.parse(document.querySelector("#__NEXT_DATA__").textContent)?.props.pageProps.initialState
+  return typeof document !== "undefined" && document.querySelector("#__NEXT_DATA__")
+    ? JSON.parse(document.querySelector("#__NEXT_DATA__")?.textContent)?.props.pageProps
+        .initialState
     : undefined;
 }
 const serverState = getServerState();

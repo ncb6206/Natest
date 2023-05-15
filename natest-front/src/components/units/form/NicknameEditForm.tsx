@@ -1,4 +1,4 @@
-import { CHANGE_NICKNAME_REQUEST } from "../../../../src/commons/reducers/user";
+import { changeNickname } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { Form, Input } from "antd";
 import { useCallback } from "react";
@@ -17,10 +17,7 @@ export default function NicknameEditForm() {
   const dispatch = useDispatch();
 
   const onSubmit = useCallback(() => {
-    dispatch({
-      type: CHANGE_NICKNAME_REQUEST,
-      data: nickname,
-    });
+    dispatch(changeNickname(nickname));
   }, [nickname]);
 
   return (

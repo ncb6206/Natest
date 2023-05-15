@@ -12,8 +12,6 @@ import {
   LOAD_MY_INFO_REQUEST,
 } from "../../src/commons/reducers/user";
 import axios from "axios";
-import wrapper from "../../src/commons/store/configureStore";
-import { END } from "redux-saga";
 
 const fetcher = (url: string) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
@@ -46,13 +44,13 @@ export default function Profile() {
     setFollowingsLimit((prev) => prev + 3);
   }, []);
 
+  if (!me) {
+    return "내 정보 로딩중...";
+  }
+
   if (followerError || followingError) {
     console.error(followerError || followingError);
     return "팔로잉/팔로워 로딩 중 에러가 발생했습니다.";
-  }
-
-  if (!me) {
-    return "내 정보 로딩중...";
   }
 
   return (

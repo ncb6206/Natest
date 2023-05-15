@@ -11,69 +11,38 @@ import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
-import {
-  LIKE_POST_REQUEST,
-  REMOVE_POST_REQUEST,
-  RETWEET_REQUEST,
-  UNLIKE_POST_REQUEST,
-} from "../../../commons/reducers/post";
+import { likePost, removePost, retweet, unlikePost } from "../../../commons/reducers/post";
 import styled from "styled-components";
 import FollowButton from "../button/FollowButton";
 import Link from "next/link";
 import moment from "moment";
+import IPost from "../../../../interface/post";
 
 moment.locale("ko");
-
-interface IPostCard {
-  post: {
-    id: number;
-    User: {
-      id: number;
-      email: string;
-      nickname: string;
-    };
-    content: string;
-    createdAt: object;
-    Comments: {
-      id: number;
-      content: string;
-    };
-    Images: {
-      id: number;
-      src: string;
-    };
-  };
-}
 
 const CardWrapper = styled.div`
   margin: 10px 0;
 `;
 
-export default function PostCard({ post }) {
+export default function PostCard({ post }: IPost) {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
-  const liked = post.Likers.find((v) => v.id === id);
+  const liked = post?.Likers?.find((v) => v.id === id);
 
   const onLike = useCallback(() => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch({
-      type: LIKE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(likePost(post.id));
   }, [id]);
 
   const onUnLike = useCallback(() => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch({
-      type: UNLIKE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(unlikePost(post.id));
   }, [id]);
 
   const onToggleComment = useCallback(() => {
@@ -84,26 +53,20 @@ export default function PostCard({ post }) {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch({
-      type: REMOVE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(removePost(post.id));
   }, [id]);
 
   const onRetweet = useCallback(() => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch({
-      type: RETWEET_REQUEST,
-      data: post.id,
-    });
+    return dispatch(retweet(post.id));
   }, [id]);
 
   return (
-    <CardWrapper key={post.id}>
+    <CardWrapper key={post?.id}>
       <Card
-        cover={post.Images[0] && <PostImages images={post.Images} />}
+        cover={post?.Images[0] && <PostImages images={post?.Images} />}
         actions={[
           <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
@@ -116,7 +79,7 @@ export default function PostCard({ post }) {
             key="more"
             content={
               <Button.Group>
-                {id && post.User.id === id ? (
+                {id && post?.User?.id === id ? (
                   <>
                     <Button>수정</Button>
                     <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>
@@ -132,11 +95,11 @@ export default function PostCard({ post }) {
             <EllipsisOutlined />
           </Popover>,
         ]}
-        title={post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
+        title={post?.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
         extra={id && <FollowButton post={post} />}
       >
-        {post.RetweetId && post.Retweet ? (
-          <Card cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}>
+        {post?.RetweetId && post?.Retweet ? (
+          <Card cover={post?.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}>
             <span style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD.")}</span>
             <Card.Meta
               avatar={
@@ -146,23 +109,23 @@ export default function PostCard({ post }) {
                   </a>
                 </Link>
               }
-              title={post.Retweet.User.nickname}
-              description={<PostCardContent postData={post.Retweet.content} />}
+              title={post?.Retweet.User.nickname}
+              description={<PostCardContent postData={post?.Retweet.content} />}
             />
           </Card>
         ) : (
           <>
-            <span style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD.")}</span>
+            <span style={{ float: "right" }}>{moment(post?.createdAt).format("YYYY.MM.DD.")}</span>
             <Card.Meta
               avatar={
-                <Link href={`/user/${post.User.id}`}>
+                <Link href={`/user/${post?.User.id}`}>
                   <a>
-                    <Avatar>{post.User.nickname[0]}</Avatar>
+                    <Avatar>{post?.User.nickname[0]}</Avatar>
                   </a>
                 </Link>
               }
-              title={post.User.nickname}
-              description={<PostCardContent postData={post.content} />}
+              title={post?.User.nickname}
+              description={<PostCardContent postData={post?.content} />}
             />
           </>
         )}
@@ -171,17 +134,17 @@ export default function PostCard({ post }) {
         <>
           <CommentForm post={post} />
           <List
-            header={`${post.Comments.length}개의 댓글`}
+            header={`${post?.Comments.length}개의 댓글`}
             itemLayout="horizontal"
-            dataSource={post.Comments}
-            renderItem={(item) => (
+            dataSource={post?.Comments}
+            renderItem={(item: IPost) => (
               <li>
                 <Comment
                   author={item.User.nickname}
                   avatar={
                     <Link href={`/user/${item.User.id}`}>
                       <a>
-                        <Avatar>{item.User.nickname[0]}</Avatar>
+                        <Avatar>{item?.User?.nickname[0]}</Avatar>
                       </a>
                     </Link>
                   }

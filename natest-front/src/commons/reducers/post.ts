@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
-import axios from "axios";
+import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
@@ -107,10 +107,13 @@ export const removePost = createAsyncThunk("post/removePost", async (data: { Pos
   return response.data;
 });
 
-export const addComment = createAsyncThunk("post/addComment", async (data: { PostId: string }) => {
-  const response = await axios.post(`/post/${data.PostId}/comment`, data);
-  return response.data;
-});
+export const addComment = createAsyncThunk(
+  "post/addComment",
+  async (data: { content: string; PostId: string; userId: string }) => {
+    const response = await axios.post(`/post/${data.PostId}/comment`, data);
+    return response.data;
+  }
+);
 
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성은 지키면서)
 const postSlice = createSlice({

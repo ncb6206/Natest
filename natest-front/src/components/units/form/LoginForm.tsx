@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { LOG_IN_REQUEST } from "../../../../src/commons/reducers/user";
+import { logIn } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 
 const ButtonWrapper = styled.div`
@@ -28,7 +28,7 @@ export default function LoginForm() {
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
-    dispatch({ type: LOG_IN_REQUEST, data: { email, password } });
+    dispatch(logIn({ email, password }));
   }, [email, password]);
 
   return (

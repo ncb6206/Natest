@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import InfiniteScroll from "react-infinite-scroller";
 import { useDispatch, useSelector } from "react-redux";
-import { LOAD_USER_POSTS_REQUEST } from "../../../src/commons/reducers/post";
+import { loadUserPosts } from "../../../src/commons/reducers/post";
 import Head from "next/head";
 import { Avatar, Card } from "antd";
 import PostCard from "../../../src/components/units/list/PostCard";
@@ -18,38 +18,40 @@ export default function User() {
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
   const { userInfo } = useSelector((state) => state.user);
 
-  // useEffect(() => {
-  //   const onScroll = () => {
-  //     if (
-  //       window.scrollY + document.documentElement.clientHeight >
-  //       document.documentElement.scrollHeight - 300
-  //     ) {
-  //       if (hasMorePosts && !loadPostsLoading) {
-  //         dispatch({
-  //           type: LOAD_USER_POSTS_REQUEST,
-  //           lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-  //           data: id,
-  //         });
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("scroll", onScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", onScroll);
-  //   };
-  // }, [mainPosts.length, hasMorePosts, id, loadPostsLoading]);
+  useEffect(() => {
+    const onScroll = () => {
+      if (
+        window.scrollY + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 300
+      ) {
+        if (hasMorePosts && !loadPostsLoading) {
+          dispatch(
+            loadUserPosts({
+              lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+              id,
+            })
+          );
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [mainPosts.length, hasMorePosts, id, loadPostsLoading]);
 
-  function onLoadMore() {
-    if (!hasMorePosts) return;
+  // function onLoadMore() {
+  //   if (!hasMorePosts) return;
 
-    if (hasMorePosts && !loadPostsLoading) {
-      dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-        data: id,
-      });
-    }
-  }
+  //   if (hasMorePosts && !loadPostsLoading) {
+  //     dispatch(
+  //       loadUserPosts({
+  //         lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+  //         id,
+  //       })
+  //     );
+  //   }
+  // }
 
   return (
     <>
@@ -86,7 +88,7 @@ export default function User() {
           <Card.Meta avatar={<Avatar>{userInfo.nickname[0]}</Avatar>} title={userInfo.nickname} />
         </Card>
       ) : null}
-      <InfiniteScroll
+      {/* <InfiniteScroll
         pageStart={0}
         loadMore={onLoadMore}
         hasMore={hasMorePosts}
@@ -95,11 +97,11 @@ export default function User() {
             로딩중입니다 ...
           </div>
         }
-      >
-        {mainPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </InfiniteScroll>
+      > */}
+      {mainPosts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
+      {/* </InfiniteScroll> */}
     </>
   );
 }
