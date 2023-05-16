@@ -17,6 +17,7 @@ import FollowButton from "../button/FollowButton";
 import Link from "next/link";
 import moment from "moment";
 import IPost from "../../../../interface/post";
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 moment.locale("ko");
 
@@ -25,8 +26,8 @@ const CardWrapper = styled.div`
 `;
 
 export default function PostCard({ post }: IPost) {
-  const dispatch = useDispatch();
-  const { removePostLoading } = useSelector((state) => state.post);
+  const dispatch = useAppDispatch();
+  const { removePostLoading } = useAppSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
   const liked = post?.Likers?.find((v) => v.id === id);

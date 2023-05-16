@@ -3,10 +3,10 @@ import { Form, Input, Checkbox, Button, Modal } from "antd";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { LOAD_MY_INFO_REQUEST, signup } from "../../src/commons/reducers/user";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -18,8 +18,8 @@ const SignupButtonWrapper = styled.div`
 
 export default function Signup() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, me, signUpError } = useSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const { signUpLoading, signUpDone, me, signUpError } = useAppSelector((state) => state.user);
 
   const [email, onChangeEmail] = useInput("");
   const [nickname, onChangeNickname] = useInput("");

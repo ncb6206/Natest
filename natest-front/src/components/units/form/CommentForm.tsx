@@ -1,14 +1,14 @@
 import { Button, Form, Input, Modal } from "antd";
 import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import useInput from "../../commons/hooks/useInput";
 import { addComment } from "../../../commons/reducers/post";
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 export default function CommentForm({ post }) {
-  const dispatch = useDispatch();
-  const id = useSelector((state) => state.user.me?.id);
-  const { addCommentDone, addCommentLoading } = useSelector((state) => state.post);
+  const dispatch = useAppDispatch();
+  const id = useAppSelector((state) => state.user.me?.id);
+  const { addCommentDone, addCommentLoading } = useAppSelector((state) => state.post);
   const [commentText, onChangeCommentText, setCommentText] = useInput("");
 
   useEffect(() => {

@@ -4,11 +4,12 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 export default function UserProfile() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { me, logOutLoading } = useSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const { me, logOutLoading } = useAppSelector((state) => state.user);
   const onLogOut = useCallback(() => {
     try {
       dispatch(logout());

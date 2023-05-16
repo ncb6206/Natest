@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
-import { useDispatch, useSelector, Store } from "react-redux";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
@@ -12,11 +11,13 @@ import {
   LOAD_MY_INFO_REQUEST,
 } from "../../src/commons/reducers/user";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 
 const fetcher = (url: string) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
 
 export default function Profile() {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const [followingsLimit, setFollowingsLimit] = useState(3);
   const [followersLimit, setFollowersLimit] = useState(3);
@@ -28,7 +29,7 @@ export default function Profile() {
     `http://localhost:3065/user/followers?limit=${followersLimit}`,
     fetcher
   );
-  const { me } = useSelector((state) => state.user);
+  const { me } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     if (!(me && me.id)) {

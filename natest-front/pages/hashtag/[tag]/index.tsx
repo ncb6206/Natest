@@ -1,4 +1,4 @@
-import { LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts } from "../../../src/commons/reducers/post";
+import { loadHashtagPosts } from "../../../src/commons/reducers/post";
 import PostCard from "../../../src/components/units/list/PostCard";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -6,12 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
 import { END } from "redux-saga";
+import { useAppDispatch, useAppSelector } from "../../..//src/commons/reducers";
 
 export default function Hashtag() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { tag } = router.query;
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePosts, loadPostsLoading } = useAppSelector((state) => state.post);
 
   useEffect(() => {
     const onScroll = () => {

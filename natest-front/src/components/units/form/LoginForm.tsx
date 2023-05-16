@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -15,8 +16,8 @@ const FormWrapper = styled(Form)`
 `;
 
 export default function LoginForm() {
-  const dispatch = useDispatch();
-  const { logInLoading, logInError } = useSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const { logInLoading, logInError } = useAppSelector((state) => state.user);
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
 

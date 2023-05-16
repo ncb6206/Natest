@@ -6,6 +6,8 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const path = require("path");
+const hpp = require("hpp");
+const helmet = require("helmet");
 
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
@@ -24,13 +26,25 @@ db.sequelize
   .catch(console.error);
 passportConfig();
 
-app.use(morgan("dev"));
-app.use(
-  cors({
-    origin: true,
-    credentials: true, // cookie를 같이 전달해주고 싶을 때 true
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined"));
+  app.use(hpp());
+  app.use(helmet({ contentSecurityPolicy: false }));
+  app.use(
+    cors({
+      origin: "http://natest.shop",
+      credentials: true,
+    })
+  );
+} else {
+  app.use(morgan("dev"));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true, // cookie를 같이 전달해주고 싶을 때 true
+    })
+  );
+}
 app.use("/", express.static(path.join(__dirname, "uploads")));
 // 프론트에서 보낸 데이터를 req.body 안에다가 넣어주는 역할을 한다
 app.use(express.json()); // json데이터를 req안에 넣어줌
@@ -41,6 +55,11 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      domain: process.env.NODE_ENV === "production" && ".natest.shop",
+    },
   })
 ); // 세션 설정
 app.use(passport.initialize());

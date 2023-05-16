@@ -1,8 +1,8 @@
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 import { changeNickname } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { Form, Input } from "antd";
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 const EditForm = styled(Form)`
@@ -12,9 +12,9 @@ const EditForm = styled(Form)`
 `;
 
 export default function NicknameEditForm() {
-  const { me } = useSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const { me } = useAppSelector((state) => state.user);
   const [nickname, onChangeNickname] = useInput(me?.nickname || "");
-  const dispatch = useDispatch();
 
   const onSubmit = useCallback(() => {
     dispatch(changeNickname(nickname));

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
 
@@ -39,6 +39,8 @@ export const initialState = {
   me: null,
   userInfo: null,
 };
+
+export type IUserReducerState = typeof initialState;
 
 export const logIn = createAsyncThunk("user/login", async (data) => {
   const response = await axios.post("/user/login", data);
@@ -108,7 +110,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (state, action) => ({
+      .addCase([HYDRATE], (state: any, action: PayloadAction<any>) => ({
         ...state,
         ...action.payload.user,
       }))

@@ -3,11 +3,12 @@ import { Button, Form, Input, Modal } from "antd";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../commons/hooks/useInput";
+import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 export default function PostForm() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [text, onChangeText, setText] = useInput("");
-  const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  const { imagePaths, addPostDone } = useAppSelector((state) => state.post);
 
   useEffect(() => {
     if (addPostDone) {

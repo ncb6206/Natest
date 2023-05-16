@@ -4,6 +4,7 @@ import UserProfile from "../../units/userProfile/UserProfile";
 import LoginForm from "../../units/form/LoginForm";
 import { useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
+import { useAppSelector } from "../../../../src/commons/reducers";
 
 interface ILayoutProps {
   children: JSX.Element;
@@ -25,7 +26,7 @@ const Global = createGlobalStyle`
 `;
 
 export function Layout(props: ILayoutProps) {
-  const { me } = useSelector((state) => state?.user);
+  const { me } = useAppSelector((state) => state?.user);
 
   return (
     <>

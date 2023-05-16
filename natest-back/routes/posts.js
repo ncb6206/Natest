@@ -35,7 +35,6 @@ router.get("/", async (req, res, next) => {
             {
               model: User,
               attributes: ["id", "nickname"],
-              order: [["createdAt", "DESC"]],
             },
           ],
         },
@@ -59,7 +58,6 @@ router.get("/", async (req, res, next) => {
         },
       ],
     });
-    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);

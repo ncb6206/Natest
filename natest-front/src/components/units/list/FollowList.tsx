@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { unfollow, removeFollower } from "../../../commons/reducers/user";
 import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../..//src/commons/reducers";
 
 const FollowListWrapper = styled(List)`
   margin-bottom: 20px;
@@ -17,7 +18,7 @@ interface IFollowList {
 }
 
 export default function FollowList({ header, data }: IFollowList) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onCancel = (id) => () => {
     if (header === "팔로잉") {
       dispatch(unfollow(id));

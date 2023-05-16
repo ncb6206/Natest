@@ -1,13 +1,11 @@
+import { useAppSelector } from "../../../src/commons/reducers";
 import { LOAD_POST_REQUEST } from "../../../src/commons/reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
-import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { END } from "redux-saga";
 
 export default function Post() {
-  const { singlePost } = useSelector((state) => state.post);
+  const { singlePost } = useAppSelector((state) => state.post);
   const router = useRouter();
   const { id } = router.query;
 

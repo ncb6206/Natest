@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
@@ -126,7 +126,7 @@ const postSlice = createSlice({
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (state, action) => ({
+      .addCase([HYDRATE], (state: any, action: PayloadAction<any>) => ({
         ...state,
         ...action.payload.post,
       }))

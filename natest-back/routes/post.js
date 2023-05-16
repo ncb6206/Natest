@@ -101,13 +101,38 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
 });
 
 router.get("/:postId", async (req, res, next) => {
+  // GET post/1
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(404).send("존재하지 않는 게시글입니다.");
+    }
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
       include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
         {
           model: User,
           attributes: ["id", "nickname"],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: "Likers",
+          attributes: ["id"],
         },
         {
           model: Image,
@@ -118,18 +143,12 @@ router.get("/:postId", async (req, res, next) => {
             {
               model: User,
               attributes: ["id", "nickname"],
-              order: [["createdAt", "DESC"]],
             },
           ],
         },
-        {
-          model: User, // 좋아요 누른 사람
-          as: "Likers",
-          attributes: ["id"],
-        },
       ],
     });
-    res.status(200).json(post);
+    res.status(200).json(fullPost);
   } catch (error) {
     console.error(error);
     next(error);
@@ -269,6 +288,34 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
     }
     await post.removeLikers(req.user.id);
     res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.patch("/:postId", isLoggedIn, async (req, res, next) => {
+  // PATCH /post/10
+  const hashtags = req.body.content.match(/#[^\s#]+/g);
+  try {
+    await Post.update(
+      { content: req.body.content },
+      {
+        where: { id: req.params.postId, UserId: req.user.id },
+      }
+    );
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() },
+          })
+        )
+      ); // [[노드,true], [리액트,true]]
+      await post.setHashtags(result.map((v) => v[0]));
+    }
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10), content: req.body.content });
   } catch (error) {
     console.error(error);
     next(error);

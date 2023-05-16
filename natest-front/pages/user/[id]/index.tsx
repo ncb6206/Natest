@@ -1,22 +1,21 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import InfiniteScroll from "react-infinite-scroller";
-import { useDispatch, useSelector } from "react-redux";
 import { loadUserPosts } from "../../../src/commons/reducers/post";
 import Head from "next/head";
 import { Avatar, Card } from "antd";
 import PostCard from "../../../src/components/units/list/PostCard";
-import wrapper from "../../../src/commons/store/configureStore";
 import axios from "axios";
 import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from "../../../src/commons/reducers/user";
 import { END } from "redux-saga";
+import { useAppDispatch, useAppSelector } from "../../../src/commons/reducers";
 
 export default function User() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = router.query;
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
-  const { userInfo } = useSelector((state) => state.user);
+  const { mainPosts, hasMorePosts, loadPostsLoading } = useAppSelector((state) => state.post);
+  const { userInfo } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const onScroll = () => {

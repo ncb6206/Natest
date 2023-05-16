@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import PostForm from "../src/components/units/form/PostForm";
 import PostCard from "../src/components/units/list/PostCard";
@@ -10,11 +9,13 @@ import { END } from "redux-saga";
 import InfiniteScroll from "react-infinite-scroller";
 import { QueryClient } from "react-query";
 import { AsyncThunkAction } from "@reduxjs/toolkit";
+import { store } from "../src/commons/store/configureStore";
+import { useAppDispatch, useAppSelector } from "../src/commons/reducers";
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
+  const dispatch = useAppDispatch();
+  const { me } = useAppSelector((state) => state.user);
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useAppSelector(
     (state) => state.post
   );
 
@@ -33,26 +34,23 @@ export default function Home() {
   //   }
   // }
 
-  // useEffect(() => {
-  //   const onScroll = () => {
-  //     if (
-  //       window.scrollY + document.documentElement.clientHeight >
-  //       document.documentElement.scrollHeight - 300
-  //     ) {
-  //       if (hasMorePosts && !loadPostsLoading) {
-  //         const lastId = mainPosts[mainPosts.length - 1]?.id;
-  //         dispatch({
-  //           type: LOAD_POSTS_REQUEST,
-  //           lastId,
-  //         });
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("scroll", onScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", onScroll);
-  //   };
-  // }, [mainPosts, hasMorePosts, loadPostsLoading]);
+  const lastId = mainPosts[mainPosts.length - 1]?.id;
+  useEffect(() => {
+    const onScroll = () => {
+      if (
+        window.pageYOffset + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 300
+      ) {
+        if (hasMorePosts && !loadPostsLoading) {
+          dispatch(loadPosts(lastId));
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [mainPosts, hasMorePosts, loadPostsLoading]);
 
   // useEffect(() => {
   //   const lastId = mainPosts[mainPosts.length - 1]?.id;
@@ -88,7 +86,7 @@ export default function Home() {
 //   const posts = await queryClient.fetchQuery("");
 // };
 
-// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+// export const getServerSideProps = store.getServerSideProps(async (context) => {
 //   console.log("getServerSideProps start");
 //   console.log(context.req.headers);
 //   const cookie = context.req ? context.req.headers.cookie : "";
