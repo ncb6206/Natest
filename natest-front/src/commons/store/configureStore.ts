@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import reducer from "../reducers";
 import { createWrapper } from "next-redux-wrapper";
+import reducer from "../reducers";
 
 function getServerState() {
   return typeof document !== "undefined"
-    ? JSON.parse(document.querySelector("#__NEXT_DATA__").textContent)?.props.pageProps.initialState
+    ? JSON.parse(String(document.querySelector("#__NEXT_DATA__")?.textContent))?.props.pageProps
+        .initialState
     : undefined;
 }
 const serverState = getServerState();

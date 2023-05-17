@@ -1,8 +1,87 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
+import { IMainPost } from "./post";
 
-export const initialState = {
+export interface IMe {
+  email: string;
+  id: number;
+  nickname: string;
+  Posts: IMainPost[];
+  Followings: Array<{
+    id: number;
+    nickname?: string;
+    Follow?: Array<{
+      createdAt: string;
+      updatedAt: string;
+      FollowingId: string;
+      FollowerId: string;
+    }>;
+  }>;
+  Followers: Array<{
+    id: number;
+    nickname?: string;
+    Follow?: Array<{
+      createdAt: string;
+      updatedAt: string;
+      FollowingId: string;
+      FollowerId: string;
+    }>;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ILoadUserInfoData {
+  email: string;
+  id: number;
+  nickname: string;
+  Posts: number;
+  Followings: number;
+  Followers: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IUserState {
+  loadMyInfoLoading: boolean; // 유저 정보 가져오기 시도중
+  loadMyInfoDone: boolean;
+  loadMyInfoError: any;
+  loadUserLoading: boolean;
+  loadUserDone: boolean;
+  loadUserError: any;
+  logInLoading: boolean; // 로그인 시도중
+  logInDone: boolean;
+  logInError: any;
+  logOutLoading: boolean; // 로그아웃 시도중
+  logOutDone: boolean;
+  logOutError: any;
+  signUpLoading: boolean; // 회원가입 시도중
+  signUpDone: boolean;
+  signUpError: any;
+  changeNicknameLoading: boolean; // 닉네임 변경 시도중
+  changeNicknameDone: boolean;
+  changeNicknameError: any;
+  followLoading: boolean; // 팔로우 시도중
+  followDone: boolean;
+  followError: any;
+  unfollowLoading: boolean; // 언팔로우 시도중
+  unfollowDone: boolean;
+  unfollowError: any;
+  loadFollowingsLoading: boolean;
+  loadFollowingsDone: boolean;
+  loadFollowingsError: any;
+  loadFollowersLoading: boolean;
+  loadFollowersDone: boolean;
+  loadFollowersError: any;
+  removeFollowerLoading: boolean;
+  removeFollowerDone: boolean;
+  removeFollowerError: any;
+  me: IMe | null;
+  userInfo: ILoadUserInfoData | null;
+}
+
+export const initialState: IUserState = {
   loadMyInfoLoading: false, // 유저 정보 가져오기 시도중
   loadMyInfoDone: false,
   loadMyInfoError: null,
@@ -62,7 +141,7 @@ export const loadFollowers = createAsyncThunk("user/loadFollowers", async (data)
   return response.data;
 });
 
-export const loadMyInfo = createAsyncThunk("user/loadMyInfo", async (data) => {
+export const loadMyInfo = createAsyncThunk("user/loadMyInfo", async () => {
   const response = await axios.get("/user");
   return response.data;
 });
@@ -102,10 +181,10 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     addPostToMe(draft, action) {
-      draft.me.Posts.unshift({ id: action.data });
+      draft.me && draft.me.Posts.unshift({ id: action.data });
     },
     removePostOfMe(draft, action) {
-      draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+      draft.me && (draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data));
     },
   },
   extraReducers: (builder) =>
@@ -135,12 +214,13 @@ const userSlice = createSlice({
       })
       .addCase(removeFollower.fulfilled, (state, action) => {
         state.removeFollowerLoading = false;
-        state.me.Followers = state.me.Followers.filter((v) => v.id !== action.data.UserId);
+        state.me &&
+          (state.me.Followers = state.me.Followers.filter((v) => v.id !== action.data.UserId));
         state.removeFollowerDone = true;
       })
       .addCase(removeFollower.rejected, (draft, action) => {
         draft.removeFollowerLoading = false;
-        draft.removeFollowerError = action.error;
+        draft.removeFollowerError = action.error.message;
       })
       .addCase(loadFollowings.pending, (draft, action) => {
         draft.loadFollowingsLoading = true;
@@ -149,12 +229,12 @@ const userSlice = createSlice({
       })
       .addCase(loadFollowings.fulfilled, (draft, action) => {
         draft.loadFollowingsLoading = false;
-        draft.me.Followings = action.data;
+        draft.me && (draft.me.Followings = action.data);
         draft.loadFollowingsDone = true;
       })
       .addCase(loadFollowings.rejected, (draft, action) => {
         draft.loadFollowingsLoading = false;
-        draft.loadFollowingsError = action.error;
+        draft.loadFollowingsError = action.error.message;
       })
       .addCase(loadFollowers.pending, (draft, action) => {
         draft.loadFollowersLoading = true;
@@ -163,12 +243,12 @@ const userSlice = createSlice({
       })
       .addCase(loadFollowers.fulfilled, (draft, action) => {
         draft.loadFollowersLoading = false;
-        draft.me.Followers = action.data;
+        draft.me && (draft.me.Followers = action.data);
         draft.loadFollowersDone = true;
       })
       .addCase(loadFollowers.rejected, (draft, action) => {
         draft.loadFollowersLoading = false;
-        draft.loadFollowersError = action.error;
+        draft.loadFollowersError = action.error.message;
       })
       .addCase(loadMyInfo.pending, (draft, action) => {
         draft.loadMyInfoLoading = true;
@@ -177,12 +257,14 @@ const userSlice = createSlice({
       })
       .addCase(loadMyInfo.fulfilled, (draft, action) => {
         draft.loadMyInfoLoading = false;
-        draft.me = action.data;
+        draft.me = action.payload;
+        console.log(action.payload);
+        console.log(draft.me);
         draft.loadMyInfoDone = true;
       })
       .addCase(loadMyInfo.rejected, (draft, action) => {
         draft.loadMyInfoLoading = false;
-        draft.loadMyInfoError = action.error;
+        draft.loadMyInfoError = action.error.message;
       })
       .addCase(loadUser.pending, (draft, action) => {
         draft.loadUserLoading = true;
@@ -196,7 +278,7 @@ const userSlice = createSlice({
       })
       .addCase(loadUser.rejected, (draft, action) => {
         draft.loadUserLoading = false;
-        draft.loadUserError = action.error;
+        draft.loadUserError = action.error.message;
       })
       .addCase(follow.pending, (draft, action) => {
         draft.followLoading = true;
@@ -205,12 +287,12 @@ const userSlice = createSlice({
       })
       .addCase(follow.fulfilled, (draft, action) => {
         draft.followLoading = false;
-        draft.me.Followings.push({ id: action.data.UserId });
+        draft.me && draft.me.Followings.push({ id: action.data.UserId });
         draft.followDone = true;
       })
       .addCase(follow.rejected, (draft, action) => {
         draft.followLoading = false;
-        draft.followError = action.error;
+        draft.followError = action.error.message;
       })
       .addCase(unfollow.pending, (draft, action) => {
         draft.unfollowLoading = true;
@@ -219,12 +301,13 @@ const userSlice = createSlice({
       })
       .addCase(unfollow.fulfilled, (draft, action) => {
         draft.unfollowLoading = false;
-        draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data.UserId);
+        draft.me &&
+          (draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data.UserId));
         draft.unfollowDone = true;
       })
       .addCase(unfollow.rejected, (draft, action) => {
         draft.unfollowLoading = false;
-        draft.unfollowError = action.error;
+        draft.unfollowError = action.error.message;
       })
       .addCase(logout.pending, (draft, action) => {
         draft.logOutLoading = true;
@@ -238,7 +321,7 @@ const userSlice = createSlice({
       })
       .addCase(logout.rejected, (draft, action) => {
         draft.logOutLoading = false;
-        draft.logOutError = action.error;
+        draft.logOutError = action.error.message;
       })
       .addCase(signup.pending, (draft, action) => {
         draft.signUpLoading = true;
@@ -251,7 +334,7 @@ const userSlice = createSlice({
       })
       .addCase(signup.rejected, (draft, action) => {
         draft.signUpLoading = false;
-        draft.signUpError = action.error;
+        draft.signUpError = action.error.message;
       })
       .addCase(changeNickname.pending, (draft, action) => {
         draft.changeNicknameLoading = true;
@@ -259,13 +342,13 @@ const userSlice = createSlice({
         draft.changeNicknameDone = false;
       })
       .addCase(changeNickname.fulfilled, (draft, action) => {
-        draft.me.nickname = action.data.nickname;
+        draft.me && (draft.me.nickname = action.data.nickname);
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
       })
       .addCase(changeNickname.rejected, (draft, action) => {
         draft.changeNicknameLoading = false;
-        draft.changeNicknameError = action.error;
+        draft.changeNicknameError = action.error.message;
       })
       .addDefaultCase((state) => state),
 });

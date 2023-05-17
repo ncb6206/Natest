@@ -1,6 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import ImagesZoom from "../imagesZoom";
+import styled from "styled-components";
+
+const ImageDiv = styled.div`
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+`;
 
 export default function PostImages({ images }) {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
@@ -15,44 +23,52 @@ export default function PostImages({ images }) {
 
   if (images.length === 1) {
     return (
-      <>
-        <img
+      <div style={{ height: 300 }}>
+        <Image
           role="presentation"
           src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
+          layout="fill"
           onClick={onZoom}
         />
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
-      </>
+      </div>
     );
   }
   if (images.length === 2) {
     return (
-      <>
-        <img
-          role="presentation"
-          style={{ width: "50%", display: "inline-block" }}
-          src={`http://localhost:3065/${images[0].src}`}
-          alt={images[0].src}
-          onClick={onZoom}
-        />
-        <img
-          role="presentation"
-          style={{ width: "50%", display: "inline-block" }}
-          src={`http://localhost:3065/${images[1].src}`}
-          alt={images[1].src}
-          onClick={onZoom}
-        />
-        {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
-      </>
+      <div>
+        <ImageDiv>
+          <Image
+            role="presentation"
+            width={150}
+            height={150}
+            src={`http://localhost:3065/${images[0].src}`}
+            alt={images[0].src}
+            onClick={onZoom}
+          />
+        </ImageDiv>
+        <ImageDiv>
+          <Image
+            role="presentation"
+            width={150}
+            height={150}
+            src={`http://localhost:3065/${images[1].src}`}
+            alt={images[1].src}
+            onClick={onZoom}
+          />
+          {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
+        </ImageDiv>
+      </div>
     );
   }
   return (
     <>
       <div>
-        <img
+        <Image
           role="presentation"
-          style={{ width: "50%" }}
+          width={150}
+          layout="fill"
           src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
           onClick={onZoom}

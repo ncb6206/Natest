@@ -4,7 +4,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { LOAD_MY_INFO_REQUEST, signup } from "../../src/commons/reducers/user";
+import wrapper from "../../src/commons/store/configureStore";
+import { LOAD_MY_INFO_REQUEST, loadMyInfo, signup } from "../../src/commons/reducers/user";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 
@@ -126,6 +127,22 @@ export default function Signup() {
     </>
   );
 }
+
+export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
+  const cookie = req ? req.headers.cookie : "";
+  axios.defaults.headers.cookie = "";
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
+  if (req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  await store.dispatch(loadMyInfo());
+
+  return {
+    props: {},
+  };
+});
 
 // export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
 //   console.log("getServerSideProps start");

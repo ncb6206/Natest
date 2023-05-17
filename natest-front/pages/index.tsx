@@ -5,12 +5,11 @@ import PostCard from "../src/components/units/list/PostCard";
 import { loadPosts } from "../src/commons/reducers/post";
 import { Modal } from "antd";
 import axios from "axios";
-import { END } from "redux-saga";
 import InfiniteScroll from "react-infinite-scroller";
 import { QueryClient } from "react-query";
-import { AsyncThunkAction } from "@reduxjs/toolkit";
-import { store } from "../src/commons/store/configureStore";
+import wrapper from "../src/commons/store/configureStore";
 import { useAppDispatch, useAppSelector } from "../src/commons/reducers";
+import { loadMyInfo } from "../src/commons/reducers/user";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -25,6 +24,10 @@ export default function Home() {
     }
   }, [retweetError]);
 
+  // useEffect(() => {
+  //   dispatch(loadPosts());
+  // }, []);
+
   // function onLoadMore() {
   //   if (!hasMorePosts) return;
 
@@ -34,23 +37,25 @@ export default function Home() {
   //   }
   // }
 
-  const lastId = mainPosts[mainPosts.length - 1]?.id;
-  useEffect(() => {
-    const onScroll = () => {
-      if (
-        window.pageYOffset + document.documentElement.clientHeight >
-        document.documentElement.scrollHeight - 300
-      ) {
-        if (hasMorePosts && !loadPostsLoading) {
-          dispatch(loadPosts(lastId));
-        }
-      }
-    };
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [mainPosts, hasMorePosts, loadPostsLoading]);
+  // function onLoadMore() {}
+
+  // const lastId = mainPosts[mainPosts.length - 1]?.id;
+  // useEffect(() => {
+  //   const onScroll = () => {
+  //     if (
+  //       window.pageYOffset + document.documentElement.clientHeight >
+  //       document.documentElement.scrollHeight - 300
+  //     ) {
+  //       if (hasMorePosts && !loadPostsLoading) {
+  //         dispatch(loadPosts(lastId));
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("scroll", onScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", onScroll);
+  //   };
+  // }, [mainPosts, hasMorePosts, loadPostsLoading]);
 
   // useEffect(() => {
   //   const lastId = mainPosts[mainPosts.length - 1]?.id;
@@ -81,12 +86,39 @@ export default function Home() {
   );
 }
 
-// export const getStaticProps = async () => {
-//   const queryClient = new QueryClient();
-//   const posts = await queryClient.fetchQuery("");
-// };
+export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
+  const cookie = req ? req.headers.cookie : "";
+  axios.defaults.headers.cookie = "";
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
+  if (req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  await store.dispatch(loadPosts());
+  // await store.dispatch(loadMyInfo());
 
-// export const getServerSideProps = store.getServerSideProps(async (context) => {
+  return {
+    props: {},
+  };
+});
+
+// export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
+//   const cookie = req ? req.headers.cookie : "";
+//   axios.defaults.headers.cookie = "";
+//   // 쿠키가 브라우저에 있는경우만 넣어서 실행
+//   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
+//   if (req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//   }
+//   await store.dispatch(loadPosts());
+//   await store.dispatch(loadMyInfo());
+
+//   return {
+//     props: {},
+//   };
+// });
+
+// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
 //   console.log("getServerSideProps start");
 //   console.log(context.req.headers);
 //   const cookie = context.req ? context.req.headers.cookie : "";

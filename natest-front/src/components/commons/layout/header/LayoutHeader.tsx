@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Input, Menu } from "antd";
+import { Input, Menu, Layout } from "antd";
 import styled from "styled-components";
 import useInput from "../../hooks/useInput";
 import { useCallback } from "react";
@@ -18,27 +18,38 @@ export function LayoutHeader() {
   }, [searchInput]);
 
   return (
-    <>
-      <Menu mode="horizontal" selectedKeys={[router.pathname]}>
-        <Menu.Item key="/">
-          <Link href="/">
-            <a>노드버드</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="/profile">
-          <Link href="/profile">
-            <a>프로필</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="/mail">
-          <SearchInput
-            enterButton
-            value={searchInput}
-            onChange={onChangeSearchInput}
-            onSearch={onSearch}
-          />
-        </Menu.Item>
-      </Menu>
-    </>
+    <Menu
+      mode="horizontal"
+      defaultSelectedKeys={[router.pathname]}
+      items={[
+        {
+          label: (
+            <Link href="/">
+              <a>노드버드</a>
+            </Link>
+          ),
+          key: "/",
+        },
+        {
+          label: (
+            <Link href="/profile">
+              <a>프로필</a>
+            </Link>
+          ),
+          key: "/profile",
+        },
+        {
+          label: (
+            <SearchInput
+              enterButton
+              value={searchInput}
+              onChange={onChangeSearchInput}
+              onSearch={onSearch}
+            />
+          ),
+          key: "/search",
+        },
+      ]}
+    />
   );
 }

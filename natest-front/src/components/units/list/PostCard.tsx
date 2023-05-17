@@ -11,7 +11,13 @@ import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
-import { likePost, removePost, retweet, unlikePost } from "../../../commons/reducers/post";
+import {
+  likePost,
+  removePost,
+  retweet,
+  unlikePost,
+  updatePost,
+} from "../../../commons/reducers/post";
 import styled from "styled-components";
 import FollowButton from "../button/FollowButton";
 import Link from "next/link";
@@ -29,8 +35,29 @@ export default function PostCard({ post }: IPost) {
   const dispatch = useAppDispatch();
   const { removePostLoading } = useAppSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const id = useSelector((state) => state.user.me?.id);
+  const [editMode, setEditMode] = useState(false);
+  const id = useAppSelector((state) => state.user.me?.id);
   const liked = post?.Likers?.find((v) => v.id === id);
+
+  const onClickUpdate = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const onCancelUpdate = useCallback(() => {
+    setEditMode(false);
+  }, []);
+
+  const onChangePost = useCallback(
+    (editText: string) => () => {
+      dispatch(
+        updatePost({
+          PostId: post.id,
+          content: editText,
+        })
+      );
+    },
+    [post]
+  );
 
   const onLike = useCallback(() => {
     if (!id) {
@@ -82,7 +109,7 @@ export default function PostCard({ post }: IPost) {
               <Button.Group>
                 {id && post?.User?.id === id ? (
                   <>
-                    <Button>수정</Button>
+                    {!post.RetweetId && <Button onClick={onClickUpdate}>수정</Button>}
                     <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>
                       삭제
                     </Button>
@@ -104,14 +131,20 @@ export default function PostCard({ post }: IPost) {
             <span style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD.")}</span>
             <Card.Meta
               avatar={
-                <Link href={`/user/${post.Retweet.User.id}`}>
+                <Link href={`/user/${post.Retweet.User.id}`} prefetch={false}>
                   <a>
                     <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
                   </a>
                 </Link>
               }
               title={post?.Retweet.User.nickname}
-              description={<PostCardContent postData={post?.Retweet.content} />}
+              description={
+                <PostCardContent
+                  postData={post?.Retweet.content}
+                  onChangePost={onChangePost}
+                  onCancelUpdate={onCancelUpdate}
+                />
+              }
             />
           </Card>
         ) : (
@@ -119,14 +152,21 @@ export default function PostCard({ post }: IPost) {
             <span style={{ float: "right" }}>{moment(post?.createdAt).format("YYYY.MM.DD.")}</span>
             <Card.Meta
               avatar={
-                <Link href={`/user/${post?.User.id}`}>
+                <Link href={`/user/${post?.User.id}`} prefetch={false}>
                   <a>
                     <Avatar>{post?.User.nickname[0]}</Avatar>
                   </a>
                 </Link>
               }
               title={post?.User.nickname}
-              description={<PostCardContent postData={post?.content} />}
+              description={
+                <PostCardContent
+                  editMode={editMode}
+                  postData={post?.content}
+                  onChangePost={onChangePost}
+                  onCancelUpdate={onCancelUpdate}
+                />
+              }
             />
           </>
         )}
@@ -143,7 +183,7 @@ export default function PostCard({ post }: IPost) {
                 <Comment
                   author={item.User.nickname}
                   avatar={
-                    <Link href={`/user/${item.User.id}`}>
+                    <Link href={`/user/${item.User.id}`} prefetch={false}>
                       <a>
                         <Avatar>{item?.User?.nickname[0]}</Avatar>
                       </a>

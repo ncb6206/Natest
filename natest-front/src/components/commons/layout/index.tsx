@@ -1,9 +1,9 @@
-import { Input, Menu, Row, Col } from "antd";
+import { Input, Menu, Row, Col, Layout } from "antd";
 import { LayoutHeader } from "./header/LayoutHeader";
 import UserProfile from "../../units/userProfile/UserProfile";
 import LoginForm from "../../units/form/LoginForm";
 import { useSelector } from "react-redux";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { useAppSelector } from "../../../../src/commons/reducers";
 
 interface ILayoutProps {
@@ -25,27 +25,45 @@ const Global = createGlobalStyle`
   }
 `;
 
-export function Layout(props: ILayoutProps) {
+const Header = styled(Layout.Header)`
+  margin: 0 50px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+`;
+
+const Content = styled(Layout.Content)`
+  padding: 0 50px;
+  margin-top: 10px;
+  width: 100%;
+  height: 100%;
+`;
+
+export function AppLayout(props: ILayoutProps) {
   const { me } = useAppSelector((state) => state?.user);
 
   return (
-    <>
+    <Layout className="layout" style={{ backgroundColor: "#ffffff" }}>
       <Global />
-      <LayoutHeader />
-      <Row gutter={8}>
-        <Col xs={24} md={6}>
-          {me ? <UserProfile /> : <LoginForm />}
-        </Col>
-        <Col xs={24} md={12}>
-          {props.children}
-        </Col>
-        <Col xs={24} md={6}>
-          {/* 보안을 위해서 noreferrer와 noopener를 사용 */}
-          <a href="https://github.com/ncb6206" target="_blank" rel="noreferrer noopener">
-            ncb6206's Github
-          </a>
-        </Col>
-      </Row>
-    </>
+      <Header>
+        <LayoutHeader />
+      </Header>
+      <Content>
+        <Row gutter={8}>
+          <Col xs={24} sm={24} md={6}>
+            {me ? <UserProfile /> : <LoginForm />}
+          </Col>
+          <Col xs={24} sm={24} md={12}>
+            {props.children}
+          </Col>
+          <Col xs={24} sm={24} md={6}>
+            {/* 보안을 위해서 noreferrer와 noopener를 사용 */}
+            <a href="https://github.com/ncb6206" target="_blank" rel="noreferrer noopener">
+              ncb6206's Github
+            </a>
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
   );
 }

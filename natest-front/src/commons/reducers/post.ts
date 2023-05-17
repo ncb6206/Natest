@@ -3,7 +3,89 @@ import _ from "lodash";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
 
-export const initialState = {
+export interface IMainPost {
+  id: number;
+  UserId: number;
+  User: {
+    id: number;
+    nickname: string;
+  };
+  content: string;
+  Images: Array<{ id: number; src: string }>;
+  Comments: Array<{
+    id: number;
+    content: string;
+    UserId: number;
+    PostId: number;
+    createdAt: string;
+    updatedAt: string;
+    User: {
+      id: number;
+      nickname: string;
+    };
+  }>;
+  Likers: Array<{
+    id: number;
+    Like?: Array<{
+      UserId: number;
+      PostId: number;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+  }>;
+  Retweet: {
+    id: number;
+    UserId: number;
+    content: string;
+    RetweetId: number | null;
+    User: { id: number; nickname: string };
+    Images: Array<{ id: number; src: string }>;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  RetweetId: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface IPostReducerState {
+  mainPosts: IMainPost[];
+  singlePost: IMainPost | null;
+  imagePaths: string[];
+  hasMorePosts: boolean;
+  likePostLoading: boolean;
+  likePostDone: boolean;
+  likePostError: any;
+  unlikePostLoading: boolean;
+  unlikePostDone: boolean;
+  unlikePostError: any;
+  loadPostsLoading: boolean;
+  loadPostsDone: boolean;
+  loadPostsError: any;
+  addPostLoading: boolean;
+  addPostDone: boolean;
+  addPostError: any;
+  updatePostLoading: boolean;
+  updatePostDone: boolean;
+  updatePostError: any;
+  removePostLoading: boolean;
+  removePostDone: boolean;
+  removePostError: any;
+  addCommentLoading: boolean;
+  addCommentDone: boolean;
+  addCommentError: any;
+  loadPostLoading: boolean;
+  loadPostDone: boolean;
+  loadPostError: any;
+  uploadImagesLoading: boolean;
+  uploadImagesDone: boolean;
+  uploadImagesError: any;
+  retweetLoading: boolean;
+  retweetDone: boolean;
+  retweetError: any;
+}
+
+export const initialState: IPostReducerState = {
   mainPosts: [],
   singlePost: null,
   imagePaths: [],
@@ -40,14 +122,12 @@ export const initialState = {
   retweetError: null,
 };
 
-export type IPostReducerState = typeof initialState;
-
 const loadPostsThrottle = async (lastId: string) => {
   const response = await axios.get(`/posts?lastId=${lastId || 0}`);
   return response.data;
 };
-//  createAsyncThunk를 사용하여 Redux에서 비동기 작업 처리, `_.throttle` 함수를 사용하여 서버로의 요청을 5초당 최대 1회로 제한
-export const loadPosts = createAsyncThunk("post/loadPosts", _.throttle(loadPostsThrottle, 5000));
+//  createAsyncThunk를 사용하여 Redux에서 비동기 작업 처리, `_.throttle` 함수를 사용하여 서버로의 요청을 1초당 최대 1회로 제한
+export const loadPosts = createAsyncThunk("post/loadPosts", _.throttle(loadPostsThrottle, 2000));
 
 const loadHashtagPostsThrottle = async ({ lastId, tag }: { lastId: string; tag: string }) => {
   const response = await axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId || 0}`);
@@ -55,7 +135,7 @@ const loadHashtagPostsThrottle = async ({ lastId, tag }: { lastId: string; tag: 
 };
 export const loadHashtagPosts = createAsyncThunk(
   "post/loadHashtagPosts",
-  _.throttle(loadHashtagPostsThrottle, 5000)
+  _.throttle(loadHashtagPostsThrottle, 2000)
 );
 
 const loadUserPostsThrottle = async ({ lastId, id }: { lastId: string; id: string }) => {
@@ -64,7 +144,7 @@ const loadUserPostsThrottle = async ({ lastId, id }: { lastId: string; id: strin
 };
 export const loadUserPosts = createAsyncThunk(
   "post/loadUserPosts",
-  _.throttle(loadUserPostsThrottle, 5000)
+  _.throttle(loadUserPostsThrottle, 2000)
 );
 
 export const retweet = createAsyncThunk("post/retweet", async (data) => {
@@ -97,10 +177,13 @@ export const addPost = createAsyncThunk("post/addPost", async (data) => {
   return response.data;
 });
 
-export const updatePost = createAsyncThunk("post/upadatePost", async (data: { PostId: string }) => {
-  const response = await axios.patch(`/post/${data.PostId}`, data);
-  return response.data;
-});
+export const updatePost = createAsyncThunk(
+  "post/upadatePost",
+  async (data: { PostId: string; content: string }) => {
+    const response = await axios.patch(`/post/${data.PostId}`, data);
+    return response.data;
+  }
+);
 
 export const removePost = createAsyncThunk("post/removePost", async (data: { PostId: string }) => {
   const response = await axios.delete(`/post/${data.PostId}`);
@@ -142,7 +225,7 @@ const postSlice = createSlice({
       })
       .addCase(retweet.rejected, (state, action) => {
         state.retweetLoading = false;
-        state.retweetError = action.error;
+        state.retweetError = action.error.message;
       })
       .addCase(uploadImage.pending, (draft, action) => {
         draft.uploadImagesLoading = true;
@@ -156,7 +239,7 @@ const postSlice = createSlice({
       })
       .addCase(uploadImage.rejected, (draft, action) => {
         draft.uploadImagesLoading = false;
-        draft.uploadImagesError = action.error;
+        draft.uploadImagesError = action.error.message;
       })
       .addCase(likePost.pending, (draft, action) => {
         draft.likePostLoading = true;
@@ -165,13 +248,13 @@ const postSlice = createSlice({
       })
       .addCase(likePost.fulfilled, (draft, action) => {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post.Likers.push({ id: action.data.UserId });
+        post?.Likers.push({ id: action.data.UserId });
         draft.likePostLoading = false;
         draft.likePostDone = true;
       })
       .addCase(likePost.rejected, (draft, action) => {
         draft.likePostLoading = false;
-        draft.likePostError = action.error;
+        draft.likePostError = action.error.message;
       })
       .addCase(unlikePost.pending, (draft, action) => {
         draft.unlikePostLoading = true;
@@ -180,13 +263,13 @@ const postSlice = createSlice({
       })
       .addCase(unlikePost.fulfilled, (draft, action) => {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+        post && (post.Likers = post?.Likers.filter((v) => v.id !== action.data.UserId));
         draft.unlikePostLoading = false;
         draft.unlikePostDone = true;
       })
       .addCase(unlikePost.rejected, (draft, action) => {
         draft.unlikePostLoading = false;
-        draft.unlikePostError = action.error;
+        draft.unlikePostError = action.error.message;
       })
       .addCase(loadPost.pending, (draft, action) => {
         draft.loadPostLoading = true;
@@ -200,7 +283,7 @@ const postSlice = createSlice({
       })
       .addCase(loadPost.rejected, (draft, action) => {
         draft.loadPostLoading = false;
-        draft.loadPostError = action.error;
+        draft.loadPostError = action.error.message;
       })
       .addCase(loadPosts.pending, (state, action) => {
         state.loadPostsLoading = true;
@@ -215,7 +298,7 @@ const postSlice = createSlice({
       })
       .addCase(loadPosts.rejected, (state, action) => {
         state.loadPostsLoading = false;
-        state.loadPostsError = action.error;
+        state.loadPostsError = action.error.message;
       })
       .addCase(loadUserPosts.pending, (state, action) => {
         state.loadPostsLoading = true;
@@ -230,7 +313,7 @@ const postSlice = createSlice({
       })
       .addCase(loadUserPosts.rejected, (state, action) => {
         state.loadPostsLoading = false;
-        state.loadPostsError = action.error;
+        state.loadPostsError = action.error.message;
       })
       .addCase(loadHashtagPosts.pending, (state, action) => {
         state.loadPostsLoading = true;
@@ -245,7 +328,7 @@ const postSlice = createSlice({
       })
       .addCase(loadHashtagPosts.rejected, (state, action) => {
         state.loadPostsLoading = false;
-        state.loadPostsError = action.error;
+        state.loadPostsError = action.error.message;
       })
       .addCase(addPost.pending, (draft, action) => {
         draft.addPostLoading = true;
@@ -260,7 +343,7 @@ const postSlice = createSlice({
       })
       .addCase(addPost.rejected, (draft, action) => {
         draft.addPostLoading = false;
-        draft.addPostError = action.error;
+        draft.addPostError = action.error.message;
       })
       .addCase(updatePost.pending, (draft, action) => {
         draft.updatePostLoading = true;
@@ -274,7 +357,7 @@ const postSlice = createSlice({
       })
       .addCase(updatePost.rejected, (draft, action) => {
         draft.updatePostLoading = false;
-        draft.updatePostError = action.error;
+        draft.updatePostError = action.error.message;
       })
       .addCase(removePost.pending, (draft, action) => {
         draft.removePostLoading = true;
@@ -288,7 +371,7 @@ const postSlice = createSlice({
       })
       .addCase(removePost.rejected, (draft, action) => {
         draft.removePostLoading = false;
-        draft.removePostError = action.error;
+        draft.removePostError = action.error.message;
       })
       .addCase(addComment.pending, (draft, action) => {
         draft.addCommentLoading = true;
@@ -297,14 +380,14 @@ const postSlice = createSlice({
       })
       .addCase(addComment.fulfilled, (draft, action) => {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        console.log("draft", draft, "post", post, "Comments", post.Coments);
-        post.Comments.unshift(action.data);
+        console.log("draft", draft, "post", post, "Comments", post?.Comments);
+        post?.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
       })
       .addCase(addComment.rejected, (draft, action) => {
         draft.addCommentLoading = false;
-        draft.addCommentError = action.error;
+        draft.addCommentError = action.error.message;
       })
       .addDefaultCase((state) => state),
 });
