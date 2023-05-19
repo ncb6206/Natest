@@ -9,9 +9,13 @@ import {
   LOAD_FOLLOWINGS_REQUEST,
   LOAD_FOLLOWERS_REQUEST,
   LOAD_MY_INFO_REQUEST,
+  loadMyInfo,
+  loadFollowingsAPI,
 } from "../../src/commons/reducers/user";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
+import wrapper from "../../src/commons/store/configureStore";
+import { useQuery } from "@tanstack/react-query";
 
 const fetcher = (url: string) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
@@ -21,21 +25,17 @@ export default function Profile() {
   const router = useRouter();
   const [followingsLimit, setFollowingsLimit] = useState(3);
   const [followersLimit, setFollowersLimit] = useState(3);
-  const { data: followingsData, error: followingError } = useSWR(
-    `http://localhost:3065/user/followings?limit=${followingsLimit}`,
-    fetcher
-  );
+  const {
+    data: followingsData,
+    error: followingError,
+    isLoading: followingIsLoading,
+    isFetching: followingIsFetching,
+  } = useQuery("followings", () => loadFollowingsAPI());
   const { data: followersData, error: followerError } = useSWR(
     `http://localhost:3065/user/followers?limit=${followersLimit}`,
     fetcher
   );
   const { me } = useAppSelector((state) => state.user);
-
-  useEffect(() => {
-    if (!(me && me.id)) {
-      router.push("/");
-    }
-  }, [me && me.id]);
 
   const loadMoreFollowers = useCallback(() => {
     setFollowersLimit((prev) => prev + 3);
@@ -45,13 +45,19 @@ export default function Profile() {
     setFollowingsLimit((prev) => prev + 3);
   }, []);
 
+  useEffect(() => {
+    if (!me?.id) {
+      router.push("/");
+    }
+  }, [me]);
+
   if (!me) {
     return "내 정보 로딩중...";
   }
 
-  if (followerError || followingError) {
-    console.error(followerError || followingError);
-    return "팔로잉/팔로워 로딩 중 에러가 발생했습니다.";
+  if (followingError || followerError) {
+    console.error(followingError || followerError);
+    return <div>팔로잉/팔로워 로딩 중 에러가 발생했습니다.</div>;
   }
 
   return (
@@ -64,7 +70,7 @@ export default function Profile() {
         header="팔로잉"
         data={followingsData}
         onClickMore={loadMoreFollowings}
-        loading={!followingError && !followingsData}
+        loading={followingIsLoading}
       />
       <FollowList
         header="팔로워"
@@ -76,18 +82,15 @@ export default function Profile() {
   );
 }
 
-// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-//   console.log("getServerSideProps start");
-//   console.log(context.req.headers);
-//   const cookie = context.req ? context.req.headers.cookie : "";
+// export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
+//   const cookie = req ? req.headers.cookie : "";
 //   axios.defaults.headers.Cookie = "";
-//   if (context.req && cookie) {
+//   if (req && cookie) {
 //     axios.defaults.headers.Cookie = cookie;
 //   }
-//   context.store.dispatch({
-//     type: LOAD_MY_INFO_REQUEST,
-//   });
-//   context.store.dispatch(END);
-//   console.log("getServerSideProps end");
-//   await context.store.sagaTask.toPromise();
+//   await store.dispatch(loadMyInfo);
+
+//   return {
+//     props: {},
+//   };
 // });

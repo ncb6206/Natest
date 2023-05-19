@@ -121,236 +121,228 @@ export const initialState: IUserState = {
 
 export type IUserReducerState = typeof initialState;
 
-export const logIn = createAsyncThunk("user/login", async (data) => {
-  const response = await axios.post("/user/login", data);
-  return response.data;
+//prettier-ignore
+export const logInAPI = createAsyncThunk("user/loginAPI", async (data: { email: string; password: string }) => {
+  return await axios.post("/user/login", data).then((response) => response.data);
 });
 
-export const removeFollower = createAsyncThunk("user/removeFollower", async (data) => {
-  const response = await axios.delete(`/user/follower/${data}`);
-  return response.data;
+//prettier-ignore
+export const removeFollowerAPI = createAsyncThunk("user/removeFollowerAPI", async (data: number) => {
+  return await axios.delete(`/user/follower/${data}`).then((response) => response.data);
 });
 
-export const loadFollowings = createAsyncThunk("user/loadFollowings", async (data) => {
-  const response = await axios.get("/user/followings", data);
-  return response.data;
+//prettier-ignore
+export const loadFollowingsAPI = createAsyncThunk("user/loadFollowingsAPI", async (page: number) => {
+  return await axios.get(`/user/followings?page=${page}`).then((response) => response.data);
 });
 
-export const loadFollowers = createAsyncThunk("user/loadFollowers", async (data) => {
-  const response = await axios.get("/user/followers", data);
-  return response.data;
+export const loadFollowersAPI = createAsyncThunk("user/loadFollowersAPI", async (page: number) => {
+  return await axios.get(`/user/followers?page=${page}`).then((response) => response.data);
 });
 
-export const loadMyInfo = createAsyncThunk("user/loadMyInfo", async () => {
-  const response = await axios.get("/user");
-  return response.data;
+export const loadMyInfoAPI = createAsyncThunk("user/loadMyInfoAPI", async () => {
+  return await axios.get("/user").then((response) => response.data);
 });
 
-export const loadUser = createAsyncThunk("user/loadUser", async (data) => {
-  const response = await axios.get(`/user/${data}`);
-  return response.data;
+export const loadUserAPI = createAsyncThunk("user/loadUserAPI", async (data: number) => {
+  return await axios.get(`/user/${data}`).then((response) => response.data);
 });
 
-export const follow = createAsyncThunk("user/follow", async (data) => {
-  const response = await axios.patch(`/user/${data}/follow`);
-  return response.data;
+export const followAPI = createAsyncThunk("user/followAPI", async (data: number) => {
+  return await axios.patch(`/user/${data}/follow`).then((response) => response.data);
 });
 
-export const unfollow = createAsyncThunk("user/unfollow", async (data) => {
-  const response = await axios.delete(`/user/${data}/follow`);
-  return response.data;
+export const unfollowAPI = createAsyncThunk("user/unfollowAPI", async (data: number) => {
+  return await axios.delete(`/user/${data}/follow`).then((response) => response.data);
 });
 
-export const logout = createAsyncThunk("user/logout", async () => {
-  const response = await axios.post(`/user/logout`);
-  return response.data;
+export const logoutAPI = createAsyncThunk("user/logoutAPI", async () => {
+  return await axios.post(`/user/logout`).then((response) => response.data);
 });
 
-export const signup = createAsyncThunk("user/signup", async (data) => {
-  const response = await axios.post(`/user`, data);
-  return response.data;
+//prettier-ignore
+export const signupAPI = createAsyncThunk("user/signupAPI", async (data: { email: string; nickname: string; password: string }) => {
+  return await axios.post(`/user`, data).then((response) => response.data);
 });
 
-export const changeNickname = createAsyncThunk("user/changeNickname", async (data) => {
-  const response = await axios.patch(`/user/nickname`, { nickname: data });
-  return response.data;
+//prettier-ignore
+export const changeNicknameAPI = createAsyncThunk("user/changeNicknameAPI", async (data: string) => {
+  return await axios.patch(`/user/nickname`, { nickname: data }).then((response) => response.data);
 });
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    addPostToMe(draft, action) {
-      draft.me && draft.me.Posts.unshift({ id: action.data });
+    addPostToMeAPI(draft, action) {
+      draft.me && draft.me.Posts.unshift({ id: action.payload });
     },
-    removePostOfMe(draft, action) {
-      draft.me && (draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data));
+    removePostOfMeAPI(draft, action) {
+      draft.me && (draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.payload));
     },
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (state: any, action: PayloadAction<any>) => ({
-        ...state,
+      .addCase([HYDRATE], (draft: any, action: PayloadAction<any>) => ({
+        ...draft,
         ...action.payload.user,
       }))
-      .addCase(logIn.pending, (state, action) => {
-        state.logInLoading = true;
-        state.logInError = null;
-        state.logInDone = false;
+      .addCase(logInAPI.pending, (draft, action) => {
+        draft.logInLoading = true;
+        draft.logInError = null;
+        draft.logInDone = false;
       })
-      .addCase(logIn.fulfilled, (state, action) => {
-        state.logInLoading = false;
-        state.me = action.payload;
-        state.logInDone = true;
+      .addCase(logInAPI.fulfilled, (draft, action) => {
+        draft.logInLoading = false;
+        draft.me = action.payload;
+        draft.logInDone = true;
       })
-      .addCase(logIn.rejected, (state, action) => {
-        state.logInLoading = false;
-        state.logInError = action.error.message;
+      .addCase(logInAPI.rejected, (draft, action) => {
+        draft.logInLoading = false;
+        draft.logInError = action.error.message;
       })
-      .addCase(removeFollower.pending, (state, action) => {
-        state.removeFollowerLoading = true;
-        state.removeFollowerError = null;
-        state.removeFollowerDone = false;
+      .addCase(removeFollowerAPI.pending, (draft, action) => {
+        draft.removeFollowerLoading = true;
+        draft.removeFollowerError = null;
+        draft.removeFollowerDone = false;
       })
-      .addCase(removeFollower.fulfilled, (state, action) => {
-        state.removeFollowerLoading = false;
-        state.me &&
-          (state.me.Followers = state.me.Followers.filter((v) => v.id !== action.data.UserId));
-        state.removeFollowerDone = true;
+      .addCase(removeFollowerAPI.fulfilled, (draft, action) => {
+        draft.removeFollowerLoading = false;
+        draft.me &&
+          (draft.me.Followers = draft.me.Followers.filter((v) => v.id !== action.payload.UserId));
+        draft.removeFollowerDone = true;
       })
-      .addCase(removeFollower.rejected, (draft, action) => {
+      .addCase(removeFollowerAPI.rejected, (draft, action) => {
         draft.removeFollowerLoading = false;
         draft.removeFollowerError = action.error.message;
       })
-      .addCase(loadFollowings.pending, (draft, action) => {
+      .addCase(loadFollowingsAPI.pending, (draft, action) => {
         draft.loadFollowingsLoading = true;
         draft.loadFollowingsError = null;
         draft.loadFollowingsDone = false;
       })
-      .addCase(loadFollowings.fulfilled, (draft, action) => {
+      .addCase(loadFollowingsAPI.fulfilled, (draft, action) => {
         draft.loadFollowingsLoading = false;
-        draft.me && (draft.me.Followings = action.data);
+        draft.me && (draft.me.Followings = action.payload);
         draft.loadFollowingsDone = true;
       })
-      .addCase(loadFollowings.rejected, (draft, action) => {
+      .addCase(loadFollowingsAPI.rejected, (draft, action) => {
         draft.loadFollowingsLoading = false;
         draft.loadFollowingsError = action.error.message;
       })
-      .addCase(loadFollowers.pending, (draft, action) => {
+      .addCase(loadFollowersAPI.pending, (draft, action) => {
         draft.loadFollowersLoading = true;
         draft.loadFollowersError = null;
         draft.loadFollowersDone = false;
       })
-      .addCase(loadFollowers.fulfilled, (draft, action) => {
+      .addCase(loadFollowersAPI.fulfilled, (draft, action) => {
         draft.loadFollowersLoading = false;
-        draft.me && (draft.me.Followers = action.data);
+        draft.me && (draft.me.Followers = action.payload);
         draft.loadFollowersDone = true;
       })
-      .addCase(loadFollowers.rejected, (draft, action) => {
+      .addCase(loadFollowersAPI.rejected, (draft, action) => {
         draft.loadFollowersLoading = false;
         draft.loadFollowersError = action.error.message;
       })
-      .addCase(loadMyInfo.pending, (draft, action) => {
+      .addCase(loadMyInfoAPI.pending, (draft, action) => {
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoError = null;
         draft.loadMyInfoDone = false;
       })
-      .addCase(loadMyInfo.fulfilled, (draft, action) => {
+      .addCase(loadMyInfoAPI.fulfilled, (draft, action) => {
         draft.loadMyInfoLoading = false;
         draft.me = action.payload;
-        console.log(action.payload);
-        console.log(draft.me);
         draft.loadMyInfoDone = true;
       })
-      .addCase(loadMyInfo.rejected, (draft, action) => {
+      .addCase(loadMyInfoAPI.rejected, (draft, action) => {
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoError = action.error.message;
       })
-      .addCase(loadUser.pending, (draft, action) => {
+      .addCase(loadUserAPI.pending, (draft, action) => {
         draft.loadUserLoading = true;
         draft.loadUserError = null;
         draft.loadUserDone = false;
       })
-      .addCase(loadUser.fulfilled, (draft, action) => {
+      .addCase(loadUserAPI.fulfilled, (draft, action) => {
         draft.loadUserLoading = false;
-        draft.userInfo = action.data;
+        draft.userInfo = action.payload;
         draft.loadUserDone = true;
       })
-      .addCase(loadUser.rejected, (draft, action) => {
+      .addCase(loadUserAPI.rejected, (draft, action) => {
         draft.loadUserLoading = false;
         draft.loadUserError = action.error.message;
       })
-      .addCase(follow.pending, (draft, action) => {
+      .addCase(followAPI.pending, (draft, action) => {
         draft.followLoading = true;
         draft.followError = null;
         draft.followDone = false;
       })
-      .addCase(follow.fulfilled, (draft, action) => {
+      .addCase(followAPI.fulfilled, (draft, action) => {
         draft.followLoading = false;
-        draft.me && draft.me.Followings.push({ id: action.data.UserId });
+        draft.me && draft.me.Followings.push({ id: action.payload.UserId });
         draft.followDone = true;
       })
-      .addCase(follow.rejected, (draft, action) => {
+      .addCase(followAPI.rejected, (draft, action) => {
         draft.followLoading = false;
         draft.followError = action.error.message;
       })
-      .addCase(unfollow.pending, (draft, action) => {
+      .addCase(unfollowAPI.pending, (draft, action) => {
         draft.unfollowLoading = true;
         draft.unfollowError = null;
         draft.unfollowDone = false;
       })
-      .addCase(unfollow.fulfilled, (draft, action) => {
+      .addCase(unfollowAPI.fulfilled, (draft, action) => {
         draft.unfollowLoading = false;
         draft.me &&
-          (draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data.UserId));
+          (draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.payload.UserId));
         draft.unfollowDone = true;
       })
-      .addCase(unfollow.rejected, (draft, action) => {
+      .addCase(unfollowAPI.rejected, (draft, action) => {
         draft.unfollowLoading = false;
         draft.unfollowError = action.error.message;
       })
-      .addCase(logout.pending, (draft, action) => {
+      .addCase(logoutAPI.pending, (draft, action) => {
         draft.logOutLoading = true;
         draft.logOutError = null;
         draft.logOutDone = false;
       })
-      .addCase(logout.fulfilled, (draft, action) => {
+      .addCase(logoutAPI.fulfilled, (draft, action) => {
         draft.logOutLoading = false;
         draft.logOutDone = true;
         draft.me = null;
       })
-      .addCase(logout.rejected, (draft, action) => {
+      .addCase(logoutAPI.rejected, (draft, action) => {
         draft.logOutLoading = false;
         draft.logOutError = action.error.message;
       })
-      .addCase(signup.pending, (draft, action) => {
+      .addCase(signupAPI.pending, (draft, action) => {
         draft.signUpLoading = true;
         draft.signUpError = null;
         draft.signUpDone = false;
       })
-      .addCase(signup.fulfilled, (draft, action) => {
+      .addCase(signupAPI.fulfilled, (draft, action) => {
         draft.signUpLoading = false;
         draft.signUpDone = true;
       })
-      .addCase(signup.rejected, (draft, action) => {
+      .addCase(signupAPI.rejected, (draft, action) => {
         draft.signUpLoading = false;
         draft.signUpError = action.error.message;
       })
-      .addCase(changeNickname.pending, (draft, action) => {
+      .addCase(changeNicknameAPI.pending, (draft, action) => {
         draft.changeNicknameLoading = true;
         draft.changeNicknameError = null;
         draft.changeNicknameDone = false;
       })
-      .addCase(changeNickname.fulfilled, (draft, action) => {
-        draft.me && (draft.me.nickname = action.data.nickname);
+      .addCase(changeNicknameAPI.fulfilled, (draft, action) => {
+        draft.me && (draft.me.nickname = action.payload.nickname);
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
       })
-      .addCase(changeNickname.rejected, (draft, action) => {
+      .addCase(changeNicknameAPI.rejected, (draft, action) => {
         draft.changeNicknameLoading = false;
         draft.changeNicknameError = action.error.message;
       })
-      .addDefaultCase((state) => state),
+      .addDefaultCase((draft) => draft),
 });
 
 export default userSlice;

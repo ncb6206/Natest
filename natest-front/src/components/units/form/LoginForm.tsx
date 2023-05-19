@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../../../../src/commons/reducers/user";
+import { logIn, logInAPI } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
@@ -29,7 +29,7 @@ export default function LoginForm() {
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
-    dispatch(logIn({ email, password }));
+    dispatch(logInAPI({ email, password }));
   }, [email, password]);
 
   return (

@@ -5,7 +5,13 @@ import useInput from "../../src/components/commons/hooks/useInput";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import wrapper from "../../src/commons/store/configureStore";
-import { LOAD_MY_INFO_REQUEST, loadMyInfo, signup } from "../../src/commons/reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  loadMyInfo,
+  loadMyInfoAPI,
+  signup,
+  signupAPI,
+} from "../../src/commons/reducers/user";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 
@@ -70,7 +76,7 @@ export default function Signup() {
     if (!term) {
       return setTermError(true);
     }
-    return dispatch(signup({ email, password, nickname }));
+    return dispatch(signupAPI({ email, password, nickname }));
   }, [email, nickname, password, passwordCheck, term]);
 
   return (
@@ -137,7 +143,7 @@ export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) 
     axios.defaults.headers.Cookie = cookie;
   }
 
-  await store.dispatch(loadMyInfo());
+  await store.dispatch(loadMyInfoAPI());
 
   return {
     props: {},

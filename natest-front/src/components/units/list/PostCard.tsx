@@ -13,10 +13,15 @@ import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
 import {
   likePost,
+  likePostAPI,
   removePost,
+  removePostAPI,
   retweet,
+  retweetAPI,
   unlikePost,
+  unlikePostAPI,
   updatePost,
+  updatePostAPI,
 } from "../../../commons/reducers/post";
 import styled from "styled-components";
 import FollowButton from "../button/FollowButton";
@@ -50,7 +55,7 @@ export default function PostCard({ post }: IPost) {
   const onChangePost = useCallback(
     (editText: string) => () => {
       dispatch(
-        updatePost({
+        updatePostAPI({
           PostId: post.id,
           content: editText,
         })
@@ -63,14 +68,14 @@ export default function PostCard({ post }: IPost) {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch(likePost(post.id));
+    return dispatch(likePostAPI(post.id));
   }, [id]);
 
   const onUnLike = useCallback(() => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch(unlikePost(post.id));
+    return dispatch(unlikePostAPI(post.id));
   }, [id]);
 
   const onToggleComment = useCallback(() => {
@@ -81,14 +86,14 @@ export default function PostCard({ post }: IPost) {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch(removePost(post.id));
+    return dispatch(removePostAPI(post.id));
   }, [id]);
 
   const onRetweet = useCallback(() => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch(retweet(post.id));
+    return dispatch(retweetAPI(post.id));
   }, [id]);
 
   return (

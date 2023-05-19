@@ -122,79 +122,59 @@ export const initialState: IPostReducerState = {
   retweetError: null,
 };
 
-const loadPostsThrottle = async (lastId: string) => {
-  const response = await axios.get(`/posts?lastId=${lastId || 0}`);
-  return response.data;
-};
-//  createAsyncThunk를 사용하여 Redux에서 비동기 작업 처리, `_.throttle` 함수를 사용하여 서버로의 요청을 1초당 최대 1회로 제한
-export const loadPosts = createAsyncThunk("post/loadPosts", _.throttle(loadPostsThrottle, 2000));
-
-const loadHashtagPostsThrottle = async ({ lastId, tag }: { lastId: string; tag: string }) => {
-  const response = await axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId || 0}`);
-  return response.data;
-};
-export const loadHashtagPosts = createAsyncThunk(
-  "post/loadHashtagPosts",
-  _.throttle(loadHashtagPostsThrottle, 2000)
-);
-
-const loadUserPostsThrottle = async ({ lastId, id }: { lastId: string; id: string }) => {
-  const response = await axios.get(`/user/${id}/posts?lastId=${lastId || 0}`);
-  return response.data;
-};
-export const loadUserPosts = createAsyncThunk(
-  "post/loadUserPosts",
-  _.throttle(loadUserPostsThrottle, 2000)
-);
-
-export const retweet = createAsyncThunk("post/retweet", async (data) => {
-  const response = await axios.post(`/post/${data}/retweet`);
-  return response.data;
+//  createAsyncThunk를 사용하여 Redux에서 비동기 작업 처리
+// prettier-ignore
+export const loadPostsAPI = createAsyncThunk("post/loadPostsAPI", async(lastId?:number) => {
+  return await axios.get(`/posts?lastId=${lastId || 0}`).then((response) => response.data);
 });
 
-export const uploadImage = createAsyncThunk("post/uploadImage", async (data) => {
-  const response = await axios.post("/post/images", data);
-  return response.data;
+// prettier-ignore
+export const loadHashtagPostsAPI = createAsyncThunk("post/loadHashtagPostsAPI",async ({ lastId, tag }: { lastId?: number; tag: string }) => {
+  return await axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId || 0}`).then((response) => response.data);
+})
+
+// prettier-ignore
+export const loadUserPostsAPI = createAsyncThunk("post/loadUserPostsAPI", async ({ lastId, id }: { lastId?: number; id: string }) => {
+  return await axios.get(`/user/${id}/posts?lastId=${lastId || 0}`).then((response) => response.data);
 });
 
-export const likePost = createAsyncThunk("post/likePost", async (data) => {
-  const response = await axios.patch(`/post/${data}/like`);
-  return response.data;
+export const retweetAPI = createAsyncThunk("post/retweetAPI", async (data: number) => {
+  return await axios.post(`/post/${data}/retweet`).then((response) => response.data);
 });
 
-export const unlikePost = createAsyncThunk("post/unlikePost", async (data) => {
-  const response = await axios.delete(`/post/${data}/like`);
-  return response.data;
+export const uploadImageAPI = createAsyncThunk("post/uploadImageAPI", async (data: FormData) => {
+  return await axios.post("/post/images", data).then((response) => response.data);
 });
 
-export const loadPost = createAsyncThunk("post/loadPost", async (data) => {
-  const response = await axios.get(`/post/${data}`);
-  return response.data;
+export const likePostAPI = createAsyncThunk("post/likePostAPI", async (data: number) => {
+  return await axios.patch(`/post/${data}/like`).then((response) => response.data);
 });
 
-export const addPost = createAsyncThunk("post/addPost", async (data) => {
-  const response = await axios.post("/post", data);
-  return response.data;
+export const unlikePostAPI = createAsyncThunk("post/unlikePostAPI", async (data: number) => {
+  return await axios.delete(`/post/${data}/like`).then((response) => response.data);
 });
 
-export const updatePost = createAsyncThunk(
-  "post/upadatePost",
-  async (data: { PostId: string; content: string }) => {
-    const response = await axios.patch(`/post/${data.PostId}`, data);
-    return response.data;
-  }
-);
-
-export const removePost = createAsyncThunk("post/removePost", async (data: { PostId: string }) => {
-  const response = await axios.delete(`/post/${data.PostId}`);
-  return response.data;
+export const loadPostAPI = createAsyncThunk("post/loadPostAPI", async (data: number) => {
+  return await axios.get(`/post/${data}`).then((response) => response.data);
 });
 
-export const addComment = createAsyncThunk(
-  "post/addComment",
-  async (data: { content: string; PostId: string; userId: string }) => {
-    const response = await axios.post(`/post/${data.PostId}/comment`, data);
-    return response.data;
+export const addPostAPI = createAsyncThunk("post/addPostAPI", async (data: FormData) => {
+  return await axios.post("/post", data).then((response) => response.data);
+});
+
+// prettier-ignore
+export const updatePostAPI = createAsyncThunk( "post/upadatePostAPI", async (data: { PostId: number; content: string }) => {
+  return await axios.patch(`/post/${data.PostId}`, data).then((response) => response.data);
+});
+
+// prettier-ignore
+export const removePostAPI = createAsyncThunk( "post/removePostAPI", async (data: { PostId: number }) => {
+  return await axios.delete(`/post/${data.PostId}`).then((response) => response.data);
+});
+
+// prettier-ignore
+export const addCommentAPI = createAsyncThunk("post/addCommentAPI", async (data: { content: string; PostId: number; userId: number }) => {
+    return await axios.post(`/post/${data.PostId}/comment`, data).then((response) => response.data);
   }
 );
 
@@ -203,193 +183,194 @@ const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    removeImage(state, action) {
-      state.imagePaths = state.imagePaths.filter((v, i) => i !== action.payload);
+    removeImageAPI(draft, action) {
+      draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.payload);
     },
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (state: any, action: PayloadAction<any>) => ({
-        ...state,
+      .addCase([HYDRATE], (draft: any, action: PayloadAction<any>) => ({
+        ...draft,
         ...action.payload.post,
       }))
-      .addCase(retweet.pending, (state, action) => {
-        state.retweetLoading = true;
-        state.retweetDone = false;
-        state.retweetError = null;
+      .addCase(retweetAPI.pending, (draft, action) => {
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
       })
-      .addCase(retweet.fulfilled, (state, action) => {
-        state.retweetLoading = false;
-        state.retweetDone = true;
-        state.mainPosts.unshift(action.data);
+      .addCase(retweetAPI.fulfilled, (draft, action) => {
+        draft.retweetLoading = false;
+        draft.retweetDone = true;
+        draft.mainPosts.unshift(action.payload);
       })
-      .addCase(retweet.rejected, (state, action) => {
-        state.retweetLoading = false;
-        state.retweetError = action.error.message;
+      .addCase(retweetAPI.rejected, (draft, action) => {
+        draft.retweetLoading = false;
+        draft.retweetError = action.error.message;
       })
-      .addCase(uploadImage.pending, (draft, action) => {
+      .addCase(uploadImageAPI.pending, (draft, action) => {
         draft.uploadImagesLoading = true;
         draft.uploadImagesDone = false;
         draft.uploadImagesError = null;
       })
-      .addCase(uploadImage.fulfilled, (draft, action) => {
-        draft.imagePaths = draft.imagePaths.concat(action.data);
+      .addCase(uploadImageAPI.fulfilled, (draft, action) => {
+        draft.imagePaths = draft.imagePaths.concat(action.payload);
         draft.uploadImagesLoading = false;
         draft.uploadImagesDone = true;
       })
-      .addCase(uploadImage.rejected, (draft, action) => {
+      .addCase(uploadImageAPI.rejected, (draft, action) => {
         draft.uploadImagesLoading = false;
         draft.uploadImagesError = action.error.message;
       })
-      .addCase(likePost.pending, (draft, action) => {
+      .addCase(likePostAPI.pending, (draft, action) => {
         draft.likePostLoading = true;
         draft.likePostDone = false;
         draft.likePostError = null;
       })
-      .addCase(likePost.fulfilled, (draft, action) => {
-        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post?.Likers.push({ id: action.data.UserId });
+      .addCase(likePostAPI.fulfilled, (draft, action) => {
+        const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
+        post?.Likers.push({ id: action.payload.UserId });
         draft.likePostLoading = false;
         draft.likePostDone = true;
       })
-      .addCase(likePost.rejected, (draft, action) => {
+      .addCase(likePostAPI.rejected, (draft, action) => {
         draft.likePostLoading = false;
         draft.likePostError = action.error.message;
       })
-      .addCase(unlikePost.pending, (draft, action) => {
+      .addCase(unlikePostAPI.pending, (draft, action) => {
         draft.unlikePostLoading = true;
         draft.unlikePostDone = false;
         draft.unlikePostError = null;
       })
-      .addCase(unlikePost.fulfilled, (draft, action) => {
-        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post && (post.Likers = post?.Likers.filter((v) => v.id !== action.data.UserId));
+      .addCase(unlikePostAPI.fulfilled, (draft, action) => {
+        const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
+        post && (post.Likers = post?.Likers.filter((v) => v.id !== action.payload.UserId));
         draft.unlikePostLoading = false;
         draft.unlikePostDone = true;
       })
-      .addCase(unlikePost.rejected, (draft, action) => {
+      .addCase(unlikePostAPI.rejected, (draft, action) => {
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error.message;
       })
-      .addCase(loadPost.pending, (draft, action) => {
+      .addCase(loadPostAPI.pending, (draft, action) => {
         draft.loadPostLoading = true;
         draft.loadPostDone = false;
         draft.loadPostError = null;
       })
-      .addCase(loadPost.fulfilled, (draft, action) => {
+      .addCase(loadPostAPI.fulfilled, (draft, action) => {
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
-        draft.singlePost = action.data;
+        draft.singlePost = action.payload;
       })
-      .addCase(loadPost.rejected, (draft, action) => {
+      .addCase(loadPostAPI.rejected, (draft, action) => {
         draft.loadPostLoading = false;
         draft.loadPostError = action.error.message;
       })
-      .addCase(loadPosts.pending, (state, action) => {
-        state.loadPostsLoading = true;
-        state.loadPostsDone = false;
-        state.loadPostsError = null;
+      .addCase(loadPostsAPI.pending, (draft, action) => {
+        draft.loadPostsLoading = true;
+        draft.loadPostsDone = false;
+        draft.loadPostsError = null;
       })
-      .addCase(loadPosts.fulfilled, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsDone = true;
-        state.mainPosts = state.mainPosts.concat(action.payload);
-        state.hasMorePosts = action.payload.length === 10;
+      .addCase(loadPostsAPI.fulfilled, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.payload);
+        draft.hasMorePosts = action.payload.length === 10;
       })
-      .addCase(loadPosts.rejected, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsError = action.error.message;
+      .addCase(loadPostsAPI.rejected, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error.message;
       })
-      .addCase(loadUserPosts.pending, (state, action) => {
-        state.loadPostsLoading = true;
-        state.loadPostsDone = false;
-        state.loadPostsError = null;
+      .addCase(loadUserPostsAPI.pending, (draft, action) => {
+        draft.loadPostsLoading = true;
+        draft.loadPostsDone = false;
+        draft.loadPostsError = null;
       })
-      .addCase(loadUserPosts.fulfilled, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsDone = true;
-        state.mainPosts = state.mainPosts.concat(action.payload);
-        state.hasMorePosts = action.payload.length === 10;
+      .addCase(loadUserPostsAPI.fulfilled, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.payload);
+        draft.hasMorePosts = action.payload.length === 10;
       })
-      .addCase(loadUserPosts.rejected, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsError = action.error.message;
+      .addCase(loadUserPostsAPI.rejected, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error.message;
       })
-      .addCase(loadHashtagPosts.pending, (state, action) => {
-        state.loadPostsLoading = true;
-        state.loadPostsDone = false;
-        state.loadPostsError = null;
+      .addCase(loadHashtagPostsAPI.pending, (draft, action) => {
+        draft.loadPostsLoading = true;
+        draft.loadPostsDone = false;
+        draft.loadPostsError = null;
       })
-      .addCase(loadHashtagPosts.fulfilled, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsDone = true;
-        state.mainPosts = state.mainPosts.concat(action.payload);
-        state.hasMorePosts = action.payload.length === 10;
+      .addCase(loadHashtagPostsAPI.fulfilled, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.payload);
+        draft.hasMorePosts = action.payload.length === 10;
       })
-      .addCase(loadHashtagPosts.rejected, (state, action) => {
-        state.loadPostsLoading = false;
-        state.loadPostsError = action.error.message;
+      .addCase(loadHashtagPostsAPI.rejected, (draft, action) => {
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error.message;
       })
-      .addCase(addPost.pending, (draft, action) => {
+      .addCase(addPostAPI.pending, (draft, action) => {
         draft.addPostLoading = true;
         draft.addPostDone = false;
         draft.addPostError = null;
       })
-      .addCase(addPost.fulfilled, (draft, action) => {
+      .addCase(addPostAPI.fulfilled, (draft, action) => {
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.mainPosts.unshift(action.data);
+        draft.mainPosts.unshift(action.payload);
         draft.imagePaths = [];
       })
-      .addCase(addPost.rejected, (draft, action) => {
+      .addCase(addPostAPI.rejected, (draft, action) => {
         draft.addPostLoading = false;
         draft.addPostError = action.error.message;
       })
-      .addCase(updatePost.pending, (draft, action) => {
+      .addCase(updatePostAPI.pending, (draft, action) => {
         draft.updatePostLoading = true;
         draft.updatePostDone = false;
         draft.updatePostError = null;
       })
-      .addCase(updatePost.fulfilled, (draft, action) => {
+      .addCase(updatePostAPI.fulfilled, (draft, action) => {
         draft.updatePostLoading = false;
         draft.updatePostDone = true;
-        draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+        draft.mainPosts.find((v) => v.id === action.payload.PostId).content =
+          action.payload.content;
       })
-      .addCase(updatePost.rejected, (draft, action) => {
+      .addCase(updatePostAPI.rejected, (draft, action) => {
         draft.updatePostLoading = false;
         draft.updatePostError = action.error.message;
       })
-      .addCase(removePost.pending, (draft, action) => {
+      .addCase(removePostAPI.pending, (draft, action) => {
         draft.removePostLoading = true;
         draft.removePostDone = false;
         draft.removePostError = null;
       })
-      .addCase(removePost.fulfilled, (draft, action) => {
+      .addCase(removePostAPI.fulfilled, (draft, action) => {
         draft.removePostLoading = false;
         draft.removePostDone = true;
-        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.payload.PostId);
       })
-      .addCase(removePost.rejected, (draft, action) => {
+      .addCase(removePostAPI.rejected, (draft, action) => {
         draft.removePostLoading = false;
         draft.removePostError = action.error.message;
       })
-      .addCase(addComment.pending, (draft, action) => {
+      .addCase(addCommentAPI.pending, (draft, action) => {
         draft.addCommentLoading = true;
         draft.addCommentDone = false;
         draft.addCommentError = null;
       })
-      .addCase(addComment.fulfilled, (draft, action) => {
-        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      .addCase(addCommentAPI.fulfilled, (draft, action) => {
+        const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
         console.log("draft", draft, "post", post, "Comments", post?.Comments);
-        post?.Comments.unshift(action.data);
+        post?.Comments.unshift(action.payload);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
       })
-      .addCase(addComment.rejected, (draft, action) => {
+      .addCase(addCommentAPI.rejected, (draft, action) => {
         draft.addCommentLoading = false;
         draft.addCommentError = action.error.message;
       })
-      .addDefaultCase((state) => state),
+      .addDefaultCase((draft) => draft),
 });
 
 export default postSlice;

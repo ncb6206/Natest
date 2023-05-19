@@ -1,4 +1,4 @@
-import { loadHashtagPosts } from "../../../src/commons/reducers/post";
+import { loadHashtagPostsAPI } from "../../../src/commons/reducers/post";
 import PostCard from "../../../src/components/units/list/PostCard";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ export default function Hashtag() {
       ) {
         if (hasMorePosts && !loadPostsLoading) {
           dispatch(
-            loadHashtagPosts({
+            loadHashtagPostsAPI({
               lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
               tag,
             })

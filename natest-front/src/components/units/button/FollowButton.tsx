@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { follow, unfollow } from "../../../commons/reducers/user";
+import { follow, followAPI, unfollow, unfollowAPI } from "../../../commons/reducers/user";
 import { useAppDispatch, useAppSelector } from "../../../..//src/commons/reducers";
 
 export default function FollowButton({ post }) {
@@ -10,9 +10,9 @@ export default function FollowButton({ post }) {
   const isFollowing = me?.Followings.find((v) => v.id === post.User.id);
   const onClickButton = useCallback(() => {
     if (isFollowing) {
-      dispatch(unfollow(post.User.id));
+      dispatch(unfollowAPI(post.User.id));
     } else {
-      dispatch(follow(post.User.id));
+      dispatch(followAPI(post.User.id));
     }
   }, [isFollowing]);
 

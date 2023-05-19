@@ -1,4 +1,4 @@
-import { logout } from "../../../../src/commons/reducers/user";
+import { logout, logoutAPI } from "../../../../src/commons/reducers/user";
 import { Card, Avatar, Button, Modal } from "antd";
 import { useCallback } from "react";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export default function UserProfile() {
 
   const onLogOut = useCallback(() => {
     try {
-      dispatch(logout());
+      dispatch(logoutAPI());
       router.replace("/");
       Modal.success({ content: "로그아웃되었습니다." });
     } catch (error) {

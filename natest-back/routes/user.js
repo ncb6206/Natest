@@ -67,11 +67,11 @@ router.get("/followings", isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.user.id } });
     if (!user) {
-      res.status(403).send("없는 사람을 찾으려고 하시네요?");
+      res.status(403).send("해당하는 유저를 찾을 수 없습니다.");
     }
     const followings = await user.getFollowings({
       offset: parseInt(req.query.page, 10) * 10,
-      limit: parseInt(req.query.limit, 10),
+      limit: parseInt(req.query.limit, 10) || 3,
     });
     res.status(200).json(followings);
   } catch (error) {

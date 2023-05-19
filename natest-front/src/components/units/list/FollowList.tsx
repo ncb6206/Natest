@@ -2,7 +2,12 @@ import { List, Button, Card } from "antd";
 import { StopOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
-import { unfollow, removeFollower } from "../../../commons/reducers/user";
+import {
+  unfollow,
+  removeFollower,
+  unfollowAPI,
+  removeFollowerAPI,
+} from "../../../commons/reducers/user";
 import { useAppDispatch } from "../../../../src/commons/reducers";
 
 const FollowListWrapper = styled(List)`
@@ -22,9 +27,9 @@ export default function FollowList(props: IFollowList) {
   const dispatch = useAppDispatch();
   const onCancel = (id) => () => {
     if (props.header === "팔로잉") {
-      dispatch(unfollow(id));
+      dispatch(unfollowAPI(id));
     }
-    dispatch(removeFollower(id));
+    dispatch(removeFollowerAPI(id));
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
-import { changeNickname } from "../../../../src/commons/reducers/user";
+import { changeNickname, changeNicknameAPI } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { Form, Input } from "antd";
 import { useCallback } from "react";
@@ -17,7 +17,7 @@ export default function NicknameEditForm() {
   const [nickname, onChangeNickname] = useInput(me?.nickname || "");
 
   const onSubmit = useCallback(() => {
-    dispatch(changeNickname(nickname));
+    dispatch(changeNicknameAPI(nickname));
   }, [nickname]);
 
   return (
