@@ -5,12 +5,18 @@ import PostCard from "../src/components/units/list/PostCard";
 import { loadPostsAPI } from "../src/commons/reducers/post";
 import { Modal } from "antd";
 import axios from "axios";
-import InfiniteScroll from "react-infinite-scroller";
-import { QueryClient } from "react-query";
 import wrapper from "../src/commons/store/configureStore";
 import { useAppDispatch, useAppSelector } from "../src/commons/reducers";
-import { loadMyInfo } from "../src/commons/reducers/user";
+import { loadMyInfo, loadMyInfoAPI } from "../src/commons/reducers/user";
 import { useInView } from "react-intersection-observer";
+import { LoadingOutlined } from "@ant-design/icons";
+import styled from "styled-components";
+
+const RefDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -31,16 +37,19 @@ export default function Home() {
       const lastId = mainPosts[mainPosts.length - 1]?.id;
       dispatch(loadPostsAPI(lastId));
     }
-    console.log(mainPosts, hasMorePosts && !loadPostsLoading, inView);
   }, [inView]);
 
   return (
     <>
       {me && <PostForm />}
-      {mainPosts.map((post) => (
-        <PostCard key={post?.id} post={post} />
-      ))}
-      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} />
+      <div>
+        {mainPosts.map((post) => (
+          <PostCard key={post?.id} post={post} />
+        ))}
+      </div>
+      <RefDiv ref={hasMorePosts && !loadPostsLoading ? ref : undefined}>
+        {hasMorePosts && <LoadingOutlined style={{ fontSize: "20px" }} />}
+      </RefDiv>
     </>
   );
 }
@@ -54,7 +63,7 @@ export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) 
     axios.defaults.headers.Cookie = cookie;
   }
   await store.dispatch(loadPostsAPI());
-  // await store.dispatch(loadMyInfo());
+  await store.dispatch(loadMyInfoAPI());
 
   return {
     props: {},

@@ -4,37 +4,29 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { LOAD_MY_INFO_REQUEST } from "../../../src/commons/reducers/user";
+import wrapper from "../../../src/commons/store/configureStore";
+import { LOAD_MY_INFO_REQUEST, loadMyInfoAPI } from "../../../src/commons/reducers/user";
 import { END } from "redux-saga";
 import { useAppDispatch, useAppSelector } from "../../..//src/commons/reducers";
+import { useInView } from "react-intersection-observer";
 
 export default function Hashtag() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [ref, inView] = useInView();
   const { tag } = router.query;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useAppSelector((state) => state.post);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (
-        window.scrollY + document.documentElement.clientHeight >
-        document.documentElement.scrollHeight - 300
-      ) {
-        if (hasMorePosts && !loadPostsLoading) {
-          dispatch(
-            loadHashtagPostsAPI({
-              lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-              tag,
-            })
-          );
-        }
-      }
-    };
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [mainPosts.length, hasMorePosts, tag, loadPostsLoading]);
+    if (hasMorePosts && !loadPostsLoading) {
+      dispatch(
+        loadHashtagPostsAPI({
+          lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+          tag,
+        })
+      );
+    }
+  }, [inView]);
 
   return (
     <>
@@ -45,22 +37,30 @@ export default function Hashtag() {
   );
 }
 
-// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-//   console.log(context);
+// export const getStaticProps = wrapper.getStaticProps((store) => async (context) => {
 //   const cookie = context.req ? context.req.headers.cookie : "";
-//   console.log(context);
+//   axios.defaults.headers.cookie = "";
+//   // 쿠키가 브라우저에 있는경우만 넣어서 실행
+//   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
+//   if (context.req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//     console.log("되는건가요?");
+//   }
+//   await store.dispatch(loadHashtagPostsAPI({ tag: context?.params?.tag }));
+//   await store.dispatch(loadMyInfoAPI());
+
+//   return {
+//     props: {},
+//   };
+// });
+
+// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+//   const cookie = context.req ? context.req.headers.cookie : "";
 //   axios.defaults.headers.Cookie = "";
 //   if (context.req && cookie) {
 //     axios.defaults.headers.Cookie = cookie;
 //   }
-//   context.store.dispatch({
-//     type: LOAD_MY_INFO_REQUEST,
-//   });
-//   context.store.dispatch({
-//     type: LOAD_HASHTAG_POSTS_REQUEST,
-//     data: context?.params?.tag,
-//   });
-//   context.store.dispatch(END);
-//   await context.store.sagaTask.toPromise();
-//   return { props: {} };
+//   await context.dispatch(loadHashtagPostsAPI({ tag: context?.params?.tag }));
+//   await context.dispatch(loadMyInfoAPI());
+//   return { props: {}, nextProps: () => {} };
 // });

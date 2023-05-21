@@ -251,8 +251,8 @@ const userSlice = createSlice({
       })
       .addCase(loadMyInfoAPI.fulfilled, (draft, action) => {
         draft.loadMyInfoLoading = false;
-        draft.me = action.payload;
         draft.loadMyInfoDone = true;
+        draft.me = action.payload;
       })
       .addCase(loadMyInfoAPI.rejected, (draft, action) => {
         draft.loadMyInfoLoading = false;

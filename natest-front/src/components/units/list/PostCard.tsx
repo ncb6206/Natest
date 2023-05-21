@@ -6,21 +6,15 @@ import {
   HeartTwoTone,
 } from "@ant-design/icons";
 import { Avatar, Button, Card, Comment, List, Modal, Popover } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
 import {
-  likePost,
   likePostAPI,
-  removePost,
   removePostAPI,
-  retweet,
   retweetAPI,
-  unlikePost,
   unlikePostAPI,
-  updatePost,
   updatePostAPI,
 } from "../../../commons/reducers/post";
 import styled from "styled-components";

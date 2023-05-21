@@ -45,7 +45,12 @@ export default function PostCardContent(props: IPostData) {
         props.postData?.split(/(#[^\s#]+)/g).map((v) => {
           if (v.match(/(#[^\s#]+)/)) {
             return (
-              <Link href={`https://www.google.com/search?q=${v.slice(1)}`} key={v}>
+              <Link
+                href={`https://www.google.com/search?q=${v.slice(1)}`}
+                key={v}
+                open={{ target: "_blank" }}
+                rel="noopener noreferrer"
+              >
                 <a>{v}</a>
               </Link>
             );
