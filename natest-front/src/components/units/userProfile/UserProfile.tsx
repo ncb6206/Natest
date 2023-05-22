@@ -25,7 +25,7 @@ export default function UserProfile() {
     <Card
       actions={[
         <div key="twit">
-          <Link href={`/user/${me.id}`}>
+          <Link href={`/user/${me?.id}`}>
             <a>
               짹짹
               <br />

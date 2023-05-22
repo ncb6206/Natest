@@ -2,7 +2,7 @@ import { Button, Form, Input, Modal } from "antd";
 import { useCallback, useEffect } from "react";
 
 import useInput from "../../commons/hooks/useInput";
-import { addComment, addCommentAPI } from "../../../commons/reducers/post";
+import { addCommentAPI } from "../../../commons/reducers/post";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
 export default function CommentForm({ post }) {
@@ -24,7 +24,7 @@ export default function CommentForm({ post }) {
     if (!commentText) {
       return Modal.error({ content: "메세지를 입력해주세요!" });
     }
-    dispatch(addCommentAPI({ content: commentText, postId: post.id, userId: id }));
+    dispatch(addCommentAPI({ content: commentText, PostId: post.id, userId: id }));
   }, [commentText, id]);
 
   return (

@@ -9,11 +9,12 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../commons/hooks/useInput";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
+import userSlice from "../../../../src/commons/reducers/user";
 
 export default function PostForm() {
   const dispatch = useAppDispatch();
   const [text, onChangeText, setText] = useInput("");
-  const { imagePaths, addPostDone } = useAppSelector((state) => state.post);
+  const { imagePaths, addPostDone, addPostError } = useAppSelector((state) => state.post);
 
   useEffect(() => {
     if (addPostDone) {
@@ -21,19 +22,24 @@ export default function PostForm() {
     }
   }, [addPostDone]);
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
     if (!text || !text.trim()) {
       return Modal.error({ content: "게시글을 작성하세요." });
     }
+
     const formData = new FormData();
     imagePaths.forEach((p) => {
       formData.append("image", p);
     });
+
     formData.append("content", text);
-    return dispatch(addPostAPI(formData));
+
+    await dispatch(addPostAPI(formData));
+    if (!addPostError) dispatch(userSlice.actions.addPostToMeAPI(formData));
   }, [text, imagePaths]);
 
   const imageInput = useRef();
+
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);

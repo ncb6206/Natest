@@ -7,7 +7,7 @@ import { Modal } from "antd";
 import axios from "axios";
 import wrapper from "../src/commons/store/configureStore";
 import { useAppDispatch, useAppSelector } from "../src/commons/reducers";
-import { loadMyInfo, loadMyInfoAPI } from "../src/commons/reducers/user";
+import { loadMyInfoAPI } from "../src/commons/reducers/user";
 import { useInView } from "react-intersection-observer";
 import { LoadingOutlined } from "@ant-design/icons";
 import styled from "styled-components";
@@ -54,7 +54,7 @@ export default function Home() {
   );
 }
 
-export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
   const cookie = req ? req.headers.cookie : "";
   axios.defaults.headers.cookie = "";
   // 쿠키가 브라우저에 있는경우만 넣어서 실행
@@ -69,19 +69,3 @@ export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) 
     props: {},
   };
 });
-
-// export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
-//   const cookie = req ? req.headers.cookie : "";
-//   axios.defaults.headers.cookie = "";
-//   // 쿠키가 브라우저에 있는경우만 넣어서 실행
-//   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
-//   if (req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-//   await store.dispatch(loadPosts());
-//   await store.dispatch(loadMyInfo());
-
-//   return {
-//     props: {},
-//   };
-// });

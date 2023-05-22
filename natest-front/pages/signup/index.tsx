@@ -128,7 +128,7 @@ export default function Signup() {
   );
 }
 
-export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
   const cookie = req ? req.headers.cookie : "";
   axios.defaults.headers.cookie = "";
   // 쿠키가 브라우저에 있는경우만 넣어서 실행

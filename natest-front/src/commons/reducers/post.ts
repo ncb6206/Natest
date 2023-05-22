@@ -174,9 +174,8 @@ export const removePostAPI = createAsyncThunk( "post/removePostAPI", async (data
 
 // prettier-ignore
 export const addCommentAPI = createAsyncThunk("post/addCommentAPI", async (data: { content: string; PostId: number; userId: number }) => {
-    return await axios.post(`/post/${data.PostId}/comment`, data).then((response) => response.data);
-  }
-);
+  return await axios.post(`/post/${data.PostId}/comment`, data).then((response) => response.data);
+});
 
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성은 지키면서)
 const postSlice = createSlice({

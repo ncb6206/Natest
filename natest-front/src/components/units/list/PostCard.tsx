@@ -23,6 +23,7 @@ import Link from "next/link";
 import moment from "moment";
 import IPost from "../../../../interface/post";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
+import userSlice from "../../../../src/commons/reducers/user";
 
 moment.locale("ko");
 
@@ -36,6 +37,7 @@ export default function PostCard({ post }: IPost) {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const id = useAppSelector((state) => state.user.me?.id);
+  const removePostError = useAppSelector((state) => state.post);
   const liked = post?.Likers?.find((v) => v.id === id);
 
   const onClickUpdate = useCallback(() => {
@@ -76,11 +78,12 @@ export default function PostCard({ post }: IPost) {
     setCommentFormOpened((prev) => !prev);
   }, []);
 
-  const onRemovePost = useCallback(() => {
+  const onRemovePost = useCallback(async () => {
     if (!id) {
       return Modal.error({ content: "로그인이 필요합니다." });
     }
-    return dispatch(removePostAPI(post.id));
+    await dispatch(removePostAPI({ PostId: post.id }));
+    if (!removePostError) dispatch(userSlice.actions.removePostOfMeAPI(post.id));
   }, [id]);
 
   const onRetweet = useCallback(() => {
@@ -139,6 +142,7 @@ export default function PostCard({ post }: IPost) {
               title={post?.Retweet.User.nickname}
               description={
                 <PostCardContent
+                  editMode={editMode}
                   postData={post?.Retweet.content}
                   onChangePost={onChangePost}
                   onCancelUpdate={onCancelUpdate}
@@ -179,7 +183,9 @@ export default function PostCard({ post }: IPost) {
             dataSource={post?.Comments}
             renderItem={(item: IPost) => (
               <li>
-                <Comment
+                {item.User.nickname}
+                {item.content}
+                {/* <Comment
                   author={item.User.nickname}
                   avatar={
                     <Link href={`/user/${item.User.id}`} prefetch={false}>
@@ -189,7 +195,7 @@ export default function PostCard({ post }: IPost) {
                     </Link>
                   }
                   content={item.content}
-                />
+                /> */}
               </li>
             )}
           />

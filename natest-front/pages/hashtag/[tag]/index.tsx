@@ -9,6 +9,8 @@ import { LOAD_MY_INFO_REQUEST, loadMyInfoAPI } from "../../../src/commons/reduce
 import { END } from "redux-saga";
 import { useAppDispatch, useAppSelector } from "../../..//src/commons/reducers";
 import { useInView } from "react-intersection-observer";
+import styled from "styled-components";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function Hashtag() {
   const dispatch = useAppDispatch();
@@ -16,6 +18,12 @@ export default function Hashtag() {
   const [ref, inView] = useInView();
   const { tag } = router.query;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useAppSelector((state) => state.post);
+
+  const RefDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `;
 
   useEffect(() => {
     if (hasMorePosts && !loadPostsLoading) {
@@ -30,37 +38,31 @@ export default function Hashtag() {
 
   return (
     <>
-      {mainPosts.map((c) => (
-        <PostCard key={c.id} post={c} />
-      ))}
+      <div>
+        {mainPosts.map((c) => (
+          <PostCard key={c.id} post={c} />
+        ))}
+      </div>
+      <RefDiv ref={hasMorePosts && !loadPostsLoading ? ref : undefined}>
+        {hasMorePosts && <LoadingOutlined style={{ fontSize: "20px" }} />}
+      </RefDiv>
     </>
   );
 }
 
-// export const getStaticProps = wrapper.getStaticProps((store) => async (context) => {
-//   const cookie = context.req ? context.req.headers.cookie : "";
-//   axios.defaults.headers.cookie = "";
-//   // 쿠키가 브라우저에 있는경우만 넣어서 실행
-//   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
-//   if (context.req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//     console.log("되는건가요?");
-//   }
-//   await store.dispatch(loadHashtagPostsAPI({ tag: context?.params?.tag }));
-//   await store.dispatch(loadMyInfoAPI());
+export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : "";
+  axios.defaults.headers.cookie = "";
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+    console.log("되는건가요?");
+  }
+  await store.dispatch(loadHashtagPostsAPI({ tag: context?.params?.tag }));
+  await store.dispatch(loadMyInfoAPI());
 
-//   return {
-//     props: {},
-//   };
-// });
-
-// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-//   const cookie = context.req ? context.req.headers.cookie : "";
-//   axios.defaults.headers.Cookie = "";
-//   if (context.req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-//   await context.dispatch(loadHashtagPostsAPI({ tag: context?.params?.tag }));
-//   await context.dispatch(loadMyInfoAPI());
-//   return { props: {}, nextProps: () => {} };
-// });
+  return {
+    props: {},
+  };
+});

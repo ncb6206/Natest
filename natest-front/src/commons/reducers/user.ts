@@ -194,8 +194,8 @@ const userSlice = createSlice({
       })
       .addCase(logInAPI.fulfilled, (draft, action) => {
         draft.logInLoading = false;
-        draft.me = action.payload;
         draft.logInDone = true;
+        draft.me = action.payload;
       })
       .addCase(logInAPI.rejected, (draft, action) => {
         draft.logInLoading = false;

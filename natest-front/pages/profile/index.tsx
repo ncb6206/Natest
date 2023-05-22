@@ -5,13 +5,7 @@ import useSWR from "swr";
 
 import NicknameEditForm from "../../src/components/units/form/NicknameEditForm";
 import FollowList from "../../src/components/units/list/FollowList";
-import {
-  LOAD_FOLLOWINGS_REQUEST,
-  LOAD_FOLLOWERS_REQUEST,
-  LOAD_MY_INFO_REQUEST,
-  loadMyInfo,
-  loadFollowingsAPI,
-} from "../../src/commons/reducers/user";
+import { loadMyInfoAPI, loadFollowingsAPI } from "../../src/commons/reducers/user";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 import wrapper from "../../src/commons/store/configureStore";
@@ -81,6 +75,19 @@ export default function Profile() {
     </>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
+  const cookie = req ? req.headers.cookie : "";
+  axios.defaults.headers.Cookie = "";
+  if (req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  await store.dispatch(loadMyInfoAPI());
+
+  return {
+    props: {},
+  };
+});
 
 // export const getStaticProps = wrapper.getStaticProps((store) => async ({ req }) => {
 //   const cookie = req ? req.headers.cookie : "";
