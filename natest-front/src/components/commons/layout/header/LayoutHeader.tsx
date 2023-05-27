@@ -17,6 +17,10 @@ export function LayoutHeader() {
     router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
 
+  const onHome = useCallback(() => {
+    router.push(`/`);
+  }, []);
+
   return (
     <Menu
       mode="horizontal"
@@ -25,7 +29,7 @@ export function LayoutHeader() {
         {
           label: (
             <Link href="/">
-              <a>노드버드</a>
+              <a onClick={onHome}>노드버드</a>
             </Link>
           ),
           key: "/",

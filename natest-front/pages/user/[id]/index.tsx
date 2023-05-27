@@ -6,7 +6,6 @@ import Head from "next/head";
 import { Avatar, Card } from "antd";
 import PostCard from "../../../src/components/units/list/PostCard";
 import axios from "axios";
-import { END } from "redux-saga";
 import wrapper from "../../../src/commons/store/configureStore";
 import { useAppDispatch, useAppSelector } from "../../../src/commons/reducers";
 import { loadMyInfoAPI, loadUserAPI } from "../../../src/commons/reducers/user";
@@ -89,15 +88,15 @@ export default function User() {
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {
   const cookie = req ? req.headers.cookie : "";
-  axios.defaults.headers.cookie = "";
+  axios.defaults.headers.Cookie = "";
   // 쿠키가 브라우저에 있는경우만 넣어서 실행
   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
   if (req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
   await store.dispatch(loadMyInfoAPI());
-  await store.dispatch(loadUserAPI(params?.id));
-  await store.dispatch(loadUserPostsAPI({ id: params.id }));
+  await store.dispatch(loadUserAPI(Number(params?.id)));
+  await store.dispatch(loadUserPostsAPI({ id: String(params?.id) }));
 
   return {
     props: {},

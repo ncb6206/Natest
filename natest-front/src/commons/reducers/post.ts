@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction, current, AnyAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
@@ -188,11 +188,11 @@ const postSlice = createSlice({
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (draft: any, action: PayloadAction<any>) => ({
+      .addCase(HYDRATE, (draft, action: AnyAction) => ({
         ...draft,
         ...action.payload.post,
       }))
-      .addCase(retweetAPI.pending, (draft, action) => {
+      .addCase(retweetAPI.pending, (draft) => {
         draft.retweetLoading = true;
         draft.retweetDone = false;
         draft.retweetError = null;
@@ -206,7 +206,7 @@ const postSlice = createSlice({
         draft.retweetLoading = false;
         draft.retweetError = action.error.message;
       })
-      .addCase(uploadImageAPI.pending, (draft, action) => {
+      .addCase(uploadImageAPI.pending, (draft) => {
         draft.uploadImagesLoading = true;
         draft.uploadImagesDone = false;
         draft.uploadImagesError = null;
@@ -220,7 +220,7 @@ const postSlice = createSlice({
         draft.uploadImagesLoading = false;
         draft.uploadImagesError = action.error.message;
       })
-      .addCase(likePostAPI.pending, (draft, action) => {
+      .addCase(likePostAPI.pending, (draft) => {
         draft.likePostLoading = true;
         draft.likePostDone = false;
         draft.likePostError = null;
@@ -235,7 +235,7 @@ const postSlice = createSlice({
         draft.likePostLoading = false;
         draft.likePostError = action.error.message;
       })
-      .addCase(unlikePostAPI.pending, (draft, action) => {
+      .addCase(unlikePostAPI.pending, (draft) => {
         draft.unlikePostLoading = true;
         draft.unlikePostDone = false;
         draft.unlikePostError = null;
@@ -250,7 +250,7 @@ const postSlice = createSlice({
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error.message;
       })
-      .addCase(loadPostAPI.pending, (draft, action) => {
+      .addCase(loadPostAPI.pending, (draft) => {
         draft.loadPostLoading = true;
         draft.loadPostDone = false;
         draft.loadPostError = null;
@@ -264,7 +264,7 @@ const postSlice = createSlice({
         draft.loadPostLoading = false;
         draft.loadPostError = action.error.message;
       })
-      .addCase(loadPostsAPI.pending, (draft, action) => {
+      .addCase(loadPostsAPI.pending, (draft) => {
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
@@ -272,14 +272,17 @@ const postSlice = createSlice({
       .addCase(loadPostsAPI.fulfilled, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
+        // draft.mainPosts = [];
+        console.log("전-draft.mainPosts", current(draft.mainPosts));
         draft.mainPosts = draft.mainPosts.concat(action.payload);
+        console.log("후-draft.mainPosts", draft.mainPosts);
         draft.hasMorePosts = action.payload.length === 10;
       })
       .addCase(loadPostsAPI.rejected, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsError = action.error.message;
       })
-      .addCase(loadUserPostsAPI.pending, (draft, action) => {
+      .addCase(loadUserPostsAPI.pending, (draft) => {
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
@@ -294,7 +297,7 @@ const postSlice = createSlice({
         draft.loadPostsLoading = false;
         draft.loadPostsError = action.error.message;
       })
-      .addCase(loadHashtagPostsAPI.pending, (draft, action) => {
+      .addCase(loadHashtagPostsAPI.pending, (draft) => {
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
@@ -302,14 +305,16 @@ const postSlice = createSlice({
       .addCase(loadHashtagPostsAPI.fulfilled, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
+        console.log("전(hashtag)-draft.mainPosts", current(draft.mainPosts));
         draft.mainPosts = draft.mainPosts.concat(action.payload);
+        console.log("후(hashtag)-draft.mainPosts", draft.mainPosts);
         draft.hasMorePosts = action.payload.length === 10;
       })
       .addCase(loadHashtagPostsAPI.rejected, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsError = action.error.message;
       })
-      .addCase(addPostAPI.pending, (draft, action) => {
+      .addCase(addPostAPI.pending, (draft) => {
         draft.addPostLoading = true;
         draft.addPostDone = false;
         draft.addPostError = null;
@@ -324,7 +329,7 @@ const postSlice = createSlice({
         draft.addPostLoading = false;
         draft.addPostError = action.error.message;
       })
-      .addCase(updatePostAPI.pending, (draft, action) => {
+      .addCase(updatePostAPI.pending, (draft) => {
         draft.updatePostLoading = true;
         draft.updatePostDone = false;
         draft.updatePostError = null;
@@ -339,7 +344,7 @@ const postSlice = createSlice({
         draft.updatePostLoading = false;
         draft.updatePostError = action.error.message;
       })
-      .addCase(removePostAPI.pending, (draft, action) => {
+      .addCase(removePostAPI.pending, (draft) => {
         draft.removePostLoading = true;
         draft.removePostDone = false;
         draft.removePostError = null;
@@ -353,7 +358,7 @@ const postSlice = createSlice({
         draft.removePostLoading = false;
         draft.removePostError = action.error.message;
       })
-      .addCase(addCommentAPI.pending, (draft, action) => {
+      .addCase(addCommentAPI.pending, (draft) => {
         draft.addCommentLoading = true;
         draft.addCommentDone = false;
         draft.addCommentError = null;

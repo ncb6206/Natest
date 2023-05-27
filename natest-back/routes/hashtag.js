@@ -6,7 +6,7 @@ const { User, Hashtag, Image, Post, Comment } = require("../models");
 const router = express.Router();
 
 router.get("/:tag", async (req, res, next) => {
-  // GET /tag/노드
+  // GET /hashtag/노드
   try {
     const where = {};
     if (parseInt(req.query.lastId, 10)) {
@@ -59,6 +59,7 @@ router.get("/:tag", async (req, res, next) => {
         },
       ],
     });
+    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);

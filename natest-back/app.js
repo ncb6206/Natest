@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const path = require("path");
 const hpp = require("hpp");
 const helmet = require("helmet");
+const { swaggerUi, specs } = require("./modules/swagger");
 
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
@@ -45,6 +46,7 @@ if (process.env.NODE_ENV === "production") {
     })
   );
 }
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 app.use("/", express.static(path.join(__dirname, "uploads")));
 // 프론트에서 보낸 데이터를 req.body 안에다가 넣어주는 역할을 한다
 app.use(express.json()); // json데이터를 req안에 넣어줌

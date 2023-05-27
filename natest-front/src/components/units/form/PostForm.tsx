@@ -1,15 +1,9 @@
-import postSlice, {
-  addPost,
-  addPostAPI,
-  uploadImage,
-  uploadImageAPI,
-} from "../../../commons/reducers/post";
+import postSlice, { addPostAPI, uploadImageAPI } from "../../../commons/reducers/post";
 import { Button, Form, Input, Modal } from "antd";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useInput from "../../commons/hooks/useInput";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
-import userSlice from "../../../../src/commons/reducers/user";
+import { loadMyInfoAPI } from "../../../../src/commons/reducers/user";
 
 export default function PostForm() {
   const dispatch = useAppDispatch();
@@ -35,7 +29,7 @@ export default function PostForm() {
     formData.append("content", text);
 
     await dispatch(addPostAPI(formData));
-    if (!addPostError) dispatch(userSlice.actions.addPostToMeAPI(formData));
+    if (!addPostError) await dispatch(loadMyInfoAPI());
   }, [text, imagePaths]);
 
   const imageInput = useRef();

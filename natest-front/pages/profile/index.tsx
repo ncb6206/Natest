@@ -10,7 +10,6 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 import wrapper from "../../src/commons/store/configureStore";
 import { useQuery } from "@tanstack/react-query";
-
 const fetcher = (url: string) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
 

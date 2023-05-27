@@ -37,7 +37,7 @@ export default function PostCard({ post }: IPost) {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const id = useAppSelector((state) => state.user.me?.id);
-  const removePostError = useAppSelector((state) => state.post);
+  const { removePostError } = useAppSelector((state) => state.post);
   const liked = post?.Likers?.find((v) => v.id === id);
 
   const onClickUpdate = useCallback(() => {

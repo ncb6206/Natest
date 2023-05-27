@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AnyAction, PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api as axios } from "./axios";
 import { HYDRATE } from "next-redux-wrapper";
 import { IMainPost } from "./post";
@@ -174,20 +174,17 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    addPostToMeAPI(draft, action) {
-      draft.me && draft.me.Posts.unshift({ id: action.payload });
-    },
     removePostOfMeAPI(draft, action) {
       draft.me && (draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.payload));
     },
   },
   extraReducers: (builder) =>
     builder
-      .addCase([HYDRATE], (draft: any, action: PayloadAction<any>) => ({
+      .addCase(HYDRATE, (draft, action: AnyAction) => ({
         ...draft,
         ...action.payload.user,
       }))
-      .addCase(logInAPI.pending, (draft, action) => {
+      .addCase(logInAPI.pending, (draft) => {
         draft.logInLoading = true;
         draft.logInError = null;
         draft.logInDone = false;
@@ -201,7 +198,7 @@ const userSlice = createSlice({
         draft.logInLoading = false;
         draft.logInError = action.error.message;
       })
-      .addCase(removeFollowerAPI.pending, (draft, action) => {
+      .addCase(removeFollowerAPI.pending, (draft) => {
         draft.removeFollowerLoading = true;
         draft.removeFollowerError = null;
         draft.removeFollowerDone = false;
@@ -216,7 +213,7 @@ const userSlice = createSlice({
         draft.removeFollowerLoading = false;
         draft.removeFollowerError = action.error.message;
       })
-      .addCase(loadFollowingsAPI.pending, (draft, action) => {
+      .addCase(loadFollowingsAPI.pending, (draft) => {
         draft.loadFollowingsLoading = true;
         draft.loadFollowingsError = null;
         draft.loadFollowingsDone = false;
@@ -230,7 +227,7 @@ const userSlice = createSlice({
         draft.loadFollowingsLoading = false;
         draft.loadFollowingsError = action.error.message;
       })
-      .addCase(loadFollowersAPI.pending, (draft, action) => {
+      .addCase(loadFollowersAPI.pending, (draft) => {
         draft.loadFollowersLoading = true;
         draft.loadFollowersError = null;
         draft.loadFollowersDone = false;
@@ -244,7 +241,7 @@ const userSlice = createSlice({
         draft.loadFollowersLoading = false;
         draft.loadFollowersError = action.error.message;
       })
-      .addCase(loadMyInfoAPI.pending, (draft, action) => {
+      .addCase(loadMyInfoAPI.pending, (draft) => {
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoError = null;
         draft.loadMyInfoDone = false;
@@ -258,7 +255,7 @@ const userSlice = createSlice({
         draft.loadMyInfoLoading = false;
         draft.loadMyInfoError = action.error.message;
       })
-      .addCase(loadUserAPI.pending, (draft, action) => {
+      .addCase(loadUserAPI.pending, (draft) => {
         draft.loadUserLoading = true;
         draft.loadUserError = null;
         draft.loadUserDone = false;
@@ -272,7 +269,7 @@ const userSlice = createSlice({
         draft.loadUserLoading = false;
         draft.loadUserError = action.error.message;
       })
-      .addCase(followAPI.pending, (draft, action) => {
+      .addCase(followAPI.pending, (draft) => {
         draft.followLoading = true;
         draft.followError = null;
         draft.followDone = false;
@@ -286,7 +283,7 @@ const userSlice = createSlice({
         draft.followLoading = false;
         draft.followError = action.error.message;
       })
-      .addCase(unfollowAPI.pending, (draft, action) => {
+      .addCase(unfollowAPI.pending, (draft) => {
         draft.unfollowLoading = true;
         draft.unfollowError = null;
         draft.unfollowDone = false;
@@ -301,12 +298,12 @@ const userSlice = createSlice({
         draft.unfollowLoading = false;
         draft.unfollowError = action.error.message;
       })
-      .addCase(logoutAPI.pending, (draft, action) => {
+      .addCase(logoutAPI.pending, (draft) => {
         draft.logOutLoading = true;
         draft.logOutError = null;
         draft.logOutDone = false;
       })
-      .addCase(logoutAPI.fulfilled, (draft, action) => {
+      .addCase(logoutAPI.fulfilled, (draft) => {
         draft.logOutLoading = false;
         draft.logOutDone = true;
         draft.me = null;
@@ -315,12 +312,12 @@ const userSlice = createSlice({
         draft.logOutLoading = false;
         draft.logOutError = action.error.message;
       })
-      .addCase(signupAPI.pending, (draft, action) => {
+      .addCase(signupAPI.pending, (draft) => {
         draft.signUpLoading = true;
         draft.signUpError = null;
         draft.signUpDone = false;
       })
-      .addCase(signupAPI.fulfilled, (draft, action) => {
+      .addCase(signupAPI.fulfilled, (draft) => {
         draft.signUpLoading = false;
         draft.signUpDone = true;
       })
@@ -328,7 +325,7 @@ const userSlice = createSlice({
         draft.signUpLoading = false;
         draft.signUpError = action.error.message;
       })
-      .addCase(changeNicknameAPI.pending, (draft, action) => {
+      .addCase(changeNicknameAPI.pending, (draft) => {
         draft.changeNicknameLoading = true;
         draft.changeNicknameError = null;
         draft.changeNicknameDone = false;

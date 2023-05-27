@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 
 export default function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
-  const { pageProps } = props;
 
   return (
     <Provider store={store}>
@@ -23,7 +22,7 @@ export default function App({ Component, ...rest }: AppProps) {
         <link rel="shortcut icon" href="/favicon.png" />
       </Head>
       <AppLayout>
-        <Component {...pageProps} />
+        <Component {...props.pageProps} />
       </AppLayout>
     </Provider>
   );
