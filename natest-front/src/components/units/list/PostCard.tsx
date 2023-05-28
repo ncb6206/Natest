@@ -5,12 +5,13 @@ import {
   RetweetOutlined,
   HeartTwoTone,
 } from "@ant-design/icons";
-import { Avatar, Button, Card, Comment, List, Modal, Popover } from "antd";
+import { Avatar, Button, Card, List, Modal, Popover } from "antd";
 import PostImages from "../post/PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "../form/CommentForm";
 import PostCardContent from "../post/PostCardContent";
 import {
+  IMainPost,
   likePostAPI,
   removePostAPI,
   retweetAPI,
@@ -22,6 +23,7 @@ import FollowButton from "../button/FollowButton";
 import Link from "next/link";
 import moment from "moment";
 import IPost from "../../../../interface/post";
+import IComment from "../../../../interface/comment";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 import userSlice from "../../../../src/commons/reducers/user";
 
@@ -31,13 +33,12 @@ const CardWrapper = styled.div`
   margin: 10px 0;
 `;
 
-export default function PostCard({ post }: IPost) {
+export default function PostCard({ post }: { post: IMainPost }) {
   const dispatch = useAppDispatch();
-  const { removePostLoading } = useAppSelector((state) => state.post);
+  const { removePostLoading, removePostError } = useAppSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const id = useAppSelector((state) => state.user.me?.id);
-  const { removePostError } = useAppSelector((state) => state.post);
   const liked = post?.Likers?.find((v) => v.id === id);
 
   const onClickUpdate = useCallback(() => {
@@ -112,7 +113,7 @@ export default function PostCard({ post }: IPost) {
                 {id && post?.User?.id === id ? (
                   <>
                     {!post.RetweetId && <Button onClick={onClickUpdate}>수정</Button>}
-                    <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>
+                    <Button danger loading={removePostLoading} onClick={onRemovePost}>
                       삭제
                     </Button>
                   </>
@@ -157,7 +158,7 @@ export default function PostCard({ post }: IPost) {
               avatar={
                 <Link href={`/user/${post?.User.id}`} prefetch={false}>
                   <a>
-                    <Avatar>{post?.User.nickname[0]}</Avatar>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
                   </a>
                 </Link>
               }
@@ -178,10 +179,10 @@ export default function PostCard({ post }: IPost) {
         <>
           <CommentForm post={post} />
           <List
-            header={`${post?.Comments.length}개의 댓글`}
+            header={`${post.Comments.length}개의 댓글`}
             itemLayout="horizontal"
-            dataSource={post?.Comments}
-            renderItem={(item: IPost) => (
+            dataSource={post.Comments}
+            renderItem={(item: IComment) => (
               <li>
                 {item.User.nickname}
                 {item.content}

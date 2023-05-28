@@ -25,7 +25,7 @@ export default function Home() {
     (state) => state.post
   );
 
-  console.log(mainPosts, me);
+  // console.log(mainPosts, me);
 
   useEffect(() => {
     if (retweetError) {

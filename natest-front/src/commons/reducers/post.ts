@@ -272,10 +272,7 @@ const postSlice = createSlice({
       .addCase(loadPostsAPI.fulfilled, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
-        // draft.mainPosts = [];
-        console.log("전-draft.mainPosts", current(draft.mainPosts));
         draft.mainPosts = draft.mainPosts.concat(action.payload);
-        console.log("후-draft.mainPosts", draft.mainPosts);
         draft.hasMorePosts = action.payload.length === 10;
       })
       .addCase(loadPostsAPI.rejected, (draft, action) => {
@@ -305,9 +302,7 @@ const postSlice = createSlice({
       .addCase(loadHashtagPostsAPI.fulfilled, (draft, action) => {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
-        console.log("전(hashtag)-draft.mainPosts", current(draft.mainPosts));
         draft.mainPosts = draft.mainPosts.concat(action.payload);
-        console.log("후(hashtag)-draft.mainPosts", draft.mainPosts);
         draft.hasMorePosts = action.payload.length === 10;
       })
       .addCase(loadHashtagPostsAPI.rejected, (draft, action) => {
@@ -337,8 +332,8 @@ const postSlice = createSlice({
       .addCase(updatePostAPI.fulfilled, (draft, action) => {
         draft.updatePostLoading = false;
         draft.updatePostDone = true;
-        draft.mainPosts.find((v) => v.id === action.payload.PostId).content =
-          action.payload.content;
+        const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
+        post && (post.content = action.payload.content);
       })
       .addCase(updatePostAPI.rejected, (draft, action) => {
         draft.updatePostLoading = false;

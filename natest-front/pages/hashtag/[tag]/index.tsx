@@ -1,4 +1,4 @@
-import postSlice, { loadHashtagPostsAPI } from "../../../src/commons/reducers/post";
+import { loadHashtagPostsAPI } from "../../../src/commons/reducers/post";
 import PostCard from "../../../src/components/units/list/PostCard";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -35,7 +35,7 @@ export default function Hashtag() {
     }
   }, [inView]);
 
-  console.log(mainPosts, hasMorePosts, loadPostsLoading, loadPostsDone, loadPostsError);
+  // console.log(mainPosts, hasMorePosts, loadPostsLoading, loadPostsDone, loadPostsError);
   return (
     <>
       <div>
