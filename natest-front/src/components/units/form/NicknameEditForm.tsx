@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
-import { changeNickname, changeNicknameAPI } from "../../../../src/commons/reducers/user";
+import { changeNicknameAPI } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { Form, Input } from "antd";
 import { useCallback } from "react";

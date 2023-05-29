@@ -1,13 +1,13 @@
 import postSlice, { addPostAPI, uploadImageAPI } from "../../../commons/reducers/post";
 import { Button, Form, Input, Modal } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import useInput from "../../commons/hooks/useInput";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 import { loadMyInfoAPI } from "../../../../src/commons/reducers/user";
 
 export default function PostForm() {
   const dispatch = useAppDispatch();
-  const [text, onChangeText, setText] = useInput("");
+  const [text, onChangeText, setText] = useInput<string>("");
   const { imagePaths, addPostDone, addPostError } = useAppSelector((state) => state.post);
 
   useEffect(() => {
@@ -32,13 +32,13 @@ export default function PostForm() {
     if (!addPostError) await dispatch(loadMyInfoAPI());
   }, [text, imagePaths]);
 
-  const imageInput = useRef();
+  const imageInput = useRef<HTMLInputElement>(null);
 
   const onClickImageUpload = useCallback(() => {
-    imageInput.current.click();
+    imageInput.current?.click();
   }, [imageInput.current]);
 
-  const onChangeImages = useCallback((e) => {
+  const onChangeImages = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     console.log("images", e.target.files);
     const imageFormData = new FormData();
     [].forEach.call(e.target.files, (f) => {
@@ -48,7 +48,7 @@ export default function PostForm() {
   }, []);
 
   const onRemoveImage = useCallback(
-    (index) => () => {
+    (index: number) => () => {
       dispatch(postSlice.actions.removeImageAPI(index));
     },
     []

@@ -5,6 +5,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 module.exports = withBundleAnalyzer({
   distDir: ".next",
   compress: true,
+  reactStrictMode: true,
   webpack(config, { webpack }) {
     const prod = process.env.NODE_ENV === "production";
     return {
@@ -18,10 +19,3 @@ module.exports = withBundleAnalyzer({
     };
   },
 });
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-};
-
-module.exports = nextConfig;

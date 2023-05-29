@@ -2,10 +2,10 @@ import { Button, Form, Input, Modal } from "antd";
 import { useCallback, useEffect } from "react";
 
 import useInput from "../../commons/hooks/useInput";
-import { addCommentAPI } from "../../../commons/reducers/post";
+import { IMainPost, addCommentAPI } from "../../../commons/reducers/post";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 
-export default function CommentForm({ post }) {
+export default function CommentForm({ post }: { post: IMainPost }) {
   const dispatch = useAppDispatch();
   const id = useAppSelector((state) => state.user.me?.id);
   const { addCommentDone, addCommentLoading } = useAppSelector((state) => state.post);

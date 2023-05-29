@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import Image from "next/image";
 import ImagesZoom from "../imagesZoom";
 import styled from "styled-components";
+import { IMainPost } from "../../../../src/commons/reducers/post";
 
 const ImageDiv = styled.div`
   width: 150px;
@@ -10,7 +11,12 @@ const ImageDiv = styled.div`
   display: inline-block;
 `;
 
-export default function PostImages({ images }) {
+interface IImages {
+  id: number;
+  src: string;
+}
+
+export default function PostImages({ images }: { images: Array<IImages> }) {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
 
   const onZoom = useCallback(() => {

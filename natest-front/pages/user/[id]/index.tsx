@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import InfiniteScroll from "react-infinite-scroller";
 import { loadUserPostsAPI } from "../../../src/commons/reducers/post";
 import Head from "next/head";
-import { Avatar, Card } from "antd";
+import { Avatar, Card, Modal } from "antd";
 import PostCard from "../../../src/components/units/list/PostCard";
 import axios from "axios";
 import wrapper from "../../../src/commons/store/configureStore";
@@ -26,6 +26,11 @@ export default function User() {
   const { id } = router.query;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useAppSelector((state) => state.post);
   const { userInfo } = useAppSelector((state) => state.user);
+
+  if (typeof id !== "string") {
+    Modal.error({ content: "올바른 경로로 접속해주세요." });
+    return <></>;
+  }
 
   useEffect(() => {
     if (hasMorePosts && inView) {
@@ -102,20 +107,3 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
     props: {},
   };
 });
-
-// export const getStaticProps = wrapper.getStaticProps((store) => async ({ req, params }) => {
-//   const cookie = req ? req.headers.cookie : "";
-//   axios.defaults.headers.cookie = "";
-//   // 쿠키가 브라우저에 있는경우만 넣어서 실행
-//   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
-//   if (req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-//   // await store.dispatch(loadMyInfo());
-//   // await store.dispatch(loadUser({ userId: params.id }));
-//   // await store.dispatch(loadUserPosts({ userId: params.id }));
-
-//   return {
-//     props: {},
-//   };
-// });

@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../..//src/commons/reducers";
 import { useInView } from "react-intersection-observer";
 import styled from "styled-components";
 import { LoadingOutlined } from "@ant-design/icons";
+import { Modal } from "antd";
 
 const RefDiv = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ const RefDiv = styled.div`
   align-items: center;
 `;
 
-export default function Hashtag() {
+export default function HashtagDetailPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [ref, inView] = useInView();
@@ -24,12 +25,19 @@ export default function Hashtag() {
   const { mainPosts, hasMorePosts, loadPostsLoading, loadPostsDone, loadPostsError } =
     useAppSelector((state) => state.post);
 
+  console.log(tag);
+
+  if (typeof tag !== "string") {
+    Modal.error({ content: "올바른 경로로 접속해주세요." });
+    return <></>;
+  }
+
   useEffect(() => {
     if (hasMorePosts && inView) {
       dispatch(
         loadHashtagPostsAPI({
           lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-          tag,
+          tag: tag,
         })
       );
     }
@@ -39,9 +47,13 @@ export default function Hashtag() {
   return (
     <>
       <div>
-        {mainPosts?.map((c) => (
-          <PostCard key={c.id} post={c} />
-        ))}
+        {mainPosts.length ? (
+          mainPosts?.map((c) => <PostCard key={c.id} post={c} />)
+        ) : (
+          <>
+            <span>해당 해시태그로 작성된 글이 없습니다. 첫 글을 게시해보세요!</span>
+          </>
+        )}
       </div>
       <RefDiv ref={hasMorePosts && !loadPostsLoading ? ref : undefined}>
         {hasMorePosts && <LoadingOutlined style={{ fontSize: "20px" }} />}
@@ -57,6 +69,11 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
   // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
   if (req && cookie) {
     axios.defaults.headers.Cookie = cookie;
+  }
+
+  if (typeof params?.tag !== "string") {
+    Modal.error({ content: "올바른 경로로 접속해주세요." });
+    return <></>;
   }
 
   await store.dispatch(loadHashtagPostsAPI({ tag: params?.tag }));

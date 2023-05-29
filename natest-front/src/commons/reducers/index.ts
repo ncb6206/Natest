@@ -4,11 +4,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import userSlice from "./user";
 import postSlice from "./post";
+import { followersApi } from "../api/FollowersApi";
+import { followingsApi } from "../api/FollowingsApi";
 
 // (이전상태, 액션) => 다음상태
 const rootReducer = combineReducers({
   user: userSlice.reducer,
   post: postSlice.reducer,
+  [followersApi.reducerPath]: followersApi.reducer,
+  [followingsApi.reducerPath]: followingsApi.reducer,
 });
 
 export default rootReducer;

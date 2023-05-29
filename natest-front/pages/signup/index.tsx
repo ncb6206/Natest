@@ -8,6 +8,7 @@ import wrapper from "../../src/commons/store/configureStore";
 import { loadMyInfoAPI, signupAPI } from "../../src/commons/reducers/user";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -58,7 +59,7 @@ export default function Signup() {
     [password]
   );
 
-  const onChangeTerm = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeTerm = useCallback((e: CheckboxChangeEvent) => {
     setTerm(e.target.checked);
     setTermError(false);
   }, []);

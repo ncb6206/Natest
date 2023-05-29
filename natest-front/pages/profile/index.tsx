@@ -10,8 +10,8 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../src/commons/reducers";
 import wrapper from "../../src/commons/store/configureStore";
 import { useQuery } from "@tanstack/react-query";
-const fetcher = (url: string) =>
-  axios.get(url, { withCredentials: true }).then((result) => result.data);
+import { useGetFollowersQuery } from "../../src/commons/api/FollowersApi";
+import { useGetFollowingsQuery } from "../../src/commons/api/FollowingsApi";
 
 export default function Profile() {
   const dispatch = useAppDispatch();
@@ -20,14 +20,16 @@ export default function Profile() {
   const [followersLimit, setFollowersLimit] = useState(3);
   const {
     data: followingsData,
-    error: followingError,
-    isLoading: followingIsLoading,
-    isFetching: followingIsFetching,
-  } = useQuery("followings", () => loadFollowingsAPI());
-  const { data: followersData, error: followerError } = useSWR(
-    `http://localhost:3065/user/followers?limit=${followersLimit}`,
-    fetcher
-  );
+    error: followingsError,
+    isLoading: followingsIsLoading,
+    isFetching: followingsIsFetching,
+  } = useGetFollowingsQuery(followingsLimit);
+  const {
+    data: followersData,
+    error: followersError,
+    isLoading: followersIsLoading,
+    isFetching: followersIsFetching,
+  } = useGetFollowersQuery(followersLimit);
   const { me } = useAppSelector((state) => state.user);
 
   const loadMoreFollowers = useCallback(() => {
@@ -48,8 +50,8 @@ export default function Profile() {
     return "내 정보 로딩중...";
   }
 
-  if (followingError || followerError) {
-    console.error(followingError || followerError);
+  if (followingsError || followersError) {
+    console.error(followingsError || followersError);
     return <div>팔로잉/팔로워 로딩 중 에러가 발생했습니다.</div>;
   }
 
@@ -63,13 +65,13 @@ export default function Profile() {
         header="팔로잉"
         data={followingsData}
         onClickMore={loadMoreFollowings}
-        loading={followingIsLoading}
+        loading={followingsIsLoading}
       />
       <FollowList
         header="팔로워"
         data={followersData}
         onClickMore={loadMoreFollowers}
-        loading={!followingError && !followersData}
+        loading={!followingsError && !followersData}
       />
     </>
   );

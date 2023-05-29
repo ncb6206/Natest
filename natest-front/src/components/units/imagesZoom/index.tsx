@@ -2,7 +2,18 @@ import { useState } from "react";
 import Slick from "react-slick";
 import * as S from "./styles";
 
-export default function ImagesZoom({ images, onClose }) {
+interface IImages {
+  id: number;
+  src: string;
+}
+
+export default function ImagesZoom({
+  images,
+  onClose,
+}: {
+  images: IImages[];
+  onClose: () => void;
+}) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   return (

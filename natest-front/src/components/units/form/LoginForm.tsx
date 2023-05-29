@@ -1,9 +1,8 @@
 import { Form, Input, Button, Modal } from "antd";
 import Link from "next/link";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn, logInAPI } from "../../../../src/commons/reducers/user";
+import { logInAPI } from "../../../../src/commons/reducers/user";
 import useInput from "../../commons/hooks/useInput";
 import { useAppDispatch, useAppSelector } from "../../../../src/commons/reducers";
 

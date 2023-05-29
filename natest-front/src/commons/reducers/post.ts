@@ -129,7 +129,7 @@ export const loadPostsAPI = createAsyncThunk("post/loadPostsAPI", async(lastId?:
 });
 
 // prettier-ignore
-export const loadHashtagPostsAPI = createAsyncThunk("post/loadHashtagPostsAPI",async ({ lastId, tag }: { lastId?: number; tag: string }) => {
+export const loadHashtagPostsAPI = createAsyncThunk("post/loadHashtagPostsAPI",async ({ lastId, tag }: { lastId?: number; tag: string; }) => {
   return await axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId || 0}`).then((response) => response.data);
 })
 

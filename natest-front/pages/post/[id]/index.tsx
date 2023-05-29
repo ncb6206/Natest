@@ -1,19 +1,21 @@
 import axios from "axios";
 import { useAppSelector } from "../../../src/commons/reducers";
-import { LOAD_POST_REQUEST, loadPostAPI } from "../../../src/commons/reducers/post";
-import { LOAD_MY_INFO_REQUEST, loadMyInfoAPI } from "../../../src/commons/reducers/user";
+import { loadPostAPI } from "../../../src/commons/reducers/post";
+import { loadMyInfoAPI } from "../../../src/commons/reducers/user";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import wrapper from "../../../src/commons/store/configureStore";
+import PostCard from "../../../src/components/units/list/PostCard";
+import { Modal } from "antd";
 
-export default function Post() {
+export default function PostDetailPage() {
   const { singlePost } = useAppSelector((state) => state.post);
   const router = useRouter();
   const { id } = router.query;
 
-  //   if(router.isFallback){
-  //     return <div>Loading...</div>
-  //   }
+  // if (router.isFallback) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <>
@@ -30,6 +32,13 @@ export default function Post() {
         /> 
         <meta property="og:url" content={`https://natest.com/post/${id}`} /> */}
       </Head>
+      {singlePost ? (
+        <PostCard key={singlePost.id} post={singlePost} />
+      ) : (
+        <>
+          <span>해당 게시글이 존재하지 않습니다.</span>
+        </>
+      )}
     </>
   );
 }
@@ -42,6 +51,12 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
   if (req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
+
+  if (typeof params?.id !== "number") {
+    Modal.error({ content: "올바른 경로로 접속해주세요." });
+    return <></>;
+  }
+
   await store.dispatch(loadPostAPI(params?.id));
   await store.dispatch(loadMyInfoAPI());
 
@@ -49,25 +64,6 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
     props: {},
   };
 });
-
-// export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-//   const cookie = context.req ? context.req.headers.cookie : "";
-//   console.log(context);
-//   axios.defaults.headers.Cookie = "";
-//   if (context.req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-//   context.store.dispatch({
-//     type: LOAD_MY_INFO_REQUEST,
-//   });
-//   context.store.dispatch({
-//     type: LOAD_POST_REQUEST,
-//     data: context?.params?.tag,
-//   });
-//   context.store.dispatch(END);
-//   await context.store.sagaTask.toPromise();
-//   return { props: {} };
-// });
 
 // export async function getStaticPaths() {
 //   return {

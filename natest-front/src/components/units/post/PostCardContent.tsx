@@ -1,7 +1,7 @@
 import { Button, Input } from "antd";
 import { useAppSelector } from "../../../../src/commons/reducers";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import useInput from "../../commons/hooks/useInput";
 
 interface IPostData {
@@ -36,7 +36,7 @@ export default function PostCardContent(props: IPostData) {
             <Button loading={updatePostLoading} onClick={props.onChangePost(editText)}>
               수정
             </Button>
-            <Button type="danger" onClick={onClickCancel}>
+            <Button danger onClick={onClickCancel}>
               취소
             </Button>
           </Button.Group>
@@ -45,13 +45,10 @@ export default function PostCardContent(props: IPostData) {
         props.postData?.split(/(#[^\s#]+)/g).map((v) => {
           if (v.match(/(#[^\s#]+)/)) {
             return (
-              <Link
-                href={`https://www.google.com/search?q=${v.slice(1)}`}
-                key={v}
-                open={{ target: "_blank" }}
-                rel="noopener noreferrer"
-              >
-                <a>{v}</a>
+              <Link href={`https://www.google.com/search?q=${v.slice(1)}`} key={v}>
+                <a target="_blank" rel="noopener noreferrer">
+                  {v}
+                </a>
               </Link>
             );
           }

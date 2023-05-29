@@ -1,4 +1,4 @@
-import { logout, logoutAPI } from "../../../../src/commons/reducers/user";
+import { logoutAPI } from "../../../../src/commons/reducers/user";
 import { Card, Avatar, Button, Modal } from "antd";
 import { useCallback } from "react";
 import Link from "next/link";
